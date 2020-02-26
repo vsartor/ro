@@ -15,7 +15,8 @@ import (
 )
 
 const (
-	INFO = iota
+	TRACE = iota
+	INFO
 	WARNING
 	ERROR
 	FATAL
@@ -27,6 +28,7 @@ const (
 )
 
 var msgLevelString = [...]string{
+	"\033[96mTRACE\033[0m",
 	"\033[94mINFO \033[0m",
 	"\033[33mWARN \033[0m",
 	"\033[31mERROR\033[0m",
@@ -59,12 +61,8 @@ func (logger *Logger) SetLevel(level int) {
 	logger.level = level
 }
 
-func (logger *Logger) SetVerbose() {
-	logger.SetLevel(INFO)
-}
-
-func (logger *Logger) SetQuiet() {
-	logger.SetLevel(ERROR)
+func (logger *Logger) Trace(msg string, args ...interface{}) {
+	logger.log(TRACE, msg, args...)
 }
 
 func (logger *Logger) Info(msg string, args ...interface{}) {
