@@ -11,7 +11,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"sync"
 	"time"
 )
 
@@ -28,16 +27,15 @@ const (
 )
 
 var msgLevelString = [...]string{
-	"\033[94m\033[40mINFO \033[0m",
-	"\033[33m\033[40mWARN \033[0m",
-	"\033[31m\033[40mERROR\033[0m",
+	"\033[94mINFO \033[0m",
+	"\033[33mWARN \033[0m",
+	"\033[31mERROR\033[0m",
 	"\033[37m\033[101mFATAL\033[0m",
 }
 
 type Logger struct {
 	name       string
 	level      int
-	writeMutex sync.Mutex
 	output     io.Writer
 }
 
@@ -45,7 +43,6 @@ func NewLogger(name string) Logger {
 	return Logger{
 		name:       name,
 		level:      globalLevel,
-		writeMutex: sync.Mutex{},
 		output:     globalWriter,
 	}
 }
@@ -107,7 +104,7 @@ func (logger *Logger) log(level int, msg string, args ...interface{}) {
 
 	// Generate logger format string
 	format := fmt.Sprintf(
-		"%s %s %8s \033[94m%s:%d\033[0m %%s\n", now, msgLevelString[level], logger.name, filename, line,
+		"%s %s %s \033[94m%s:%d\033[0m %%s\n", now, msgLevelString[level], logger.name, filename, line,
 	)
 
 	// Format string if necessary
@@ -117,7 +114,7 @@ func (logger *Logger) log(level int, msg string, args ...interface{}) {
 	}
 
 	// Perform the writing operation, thread-safely
-	logger.writeMutex.Lock()
+	globalMutex.Lock()
 	_, _ = fmt.Fprintf(logger.output, format, fmtMsg)
-	logger.writeMutex.Unlock()
+	globalMutex.Unlock()
 }
