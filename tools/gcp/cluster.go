@@ -45,6 +45,7 @@ func computeExecutorMemory(cores, memoryPerCore int) int {
 
 // Builds a CreateClusterRequest to be send by the client
 func getClusterCreationRequest(
+	clusterName string,
 	projectName string,
 	bucketName string,
 	numWorkers int,
@@ -141,7 +142,7 @@ func getClusterCreationRequest(
 
 	cluster := &dataprocpb.Cluster{
 		ProjectId:   projectName,
-		ClusterName: "ro-cluster",
+		ClusterName: clusterName,
 		Config:      clusterConfig,
 	}
 
@@ -160,6 +161,7 @@ func clusterCmd() {
 	donna.ExpectOption("project")
 	donna.ExpectOption("bucket")
 	donna.ExpectOption("cred")
+	donna.ExpectOption("name")
 	donna.ExpectOption("c")
 	donna.ExpectOption("w")
 	donna.ExpectFlag("highmem")
@@ -187,6 +189,11 @@ func clusterCmd() {
 	}
 	highMemory := donna.HasFlag("highmem")
 
+	clusterName, ok := donna.GetOption("name")
+	if !ok {
+		clusterName = "ro-cluster"
+	}
+
 	// Convert integer options
 	numWorkers, err := strconv.Atoi(workers)
 	if err != nil {
@@ -210,7 +217,7 @@ func clusterCmd() {
 	}
 	defer client.Close()
 
-	request := getClusterCreationRequest(projectName, bucketName, numWorkers, numCores, highMemory)
+	request := getClusterCreationRequest(clusterName, projectName, bucketName, numWorkers, numCores, highMemory)
 
 	_, err = client.CreateCluster(ctx, request)
 	if err != nil {
