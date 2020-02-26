@@ -7,7 +7,7 @@ package donna
 
 import "ro/weems"
 
-// Donna Paulsen handles command line arguments for Ro.
+// Donna handles command line arguments for Ro.
 
 // It handles two different types of arguments: options and arguments.
 //
