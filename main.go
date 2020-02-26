@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/vsartor/ro/donna"
 	"github.com/vsartor/ro/tools/blogo"
+	"github.com/vsartor/ro/tools/gcp"
 	"github.com/vsartor/ro/weems"
 )
 
@@ -48,6 +49,9 @@ func main() {
 	case "blogo":
 		logger.Info("Dispatching to blogo.")
 		blogo.Cmd()
+	case "gcp":
+		logger.Info("Dispatching to gcp.")
+		gcp.Cmd()
 	default:
 		logger.Fatal("Unexpected argument '%s'.", method)
 	}
