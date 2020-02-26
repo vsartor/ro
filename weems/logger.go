@@ -74,6 +74,11 @@ func (logger *Logger) Fatal(msg string, args ...interface{}) {
 }
 
 func (logger *Logger) log(level int, msg string, args ...interface{}) {
+	// Avoid any work if unecessary
+	if level < logger.level {
+		return
+	}
+
 	// Make sure we get timestamp as early as possible
 	now := time.Now()
 
