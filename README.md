@@ -113,7 +113,7 @@ ro [global flags/options] <arguments> [command flags/options]
 
 Flags and options are validated, meaning invalid flags/options will cause Donna to log a fatal message.
 Each tool must specify which options and flags they expect to receive through Donna's `func ExpectFlag(string)`
-and `ExpectOption` and, following this specification, the tool's entry point must call Donna's
+and `func ExpectOption(string)` and, following this specification, the tool's entry point must call Donna's
 `func ValidateLocal(string)`.
 
 Presence of flags can be checked with Donna's `func HasFlag(string) bool` and options values can be checked with
