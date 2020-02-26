@@ -39,8 +39,6 @@ func main() {
 		logger.SetLevel(weems.INFO)
 	}
 
-	logger.Info("Method dispatching is beginning.")
-
 	method, ok := donna.NextArg()
 	if !ok {
 		logger.Fatal("Expected an argument.")
@@ -48,18 +46,12 @@ func main() {
 
 	switch method {
 	case "version":
-		version()
-	case "help":
-		help()
+		cmdVersion()
 	default:
 		logger.Fatal("Unexpected argument '%s'.", method)
 	}
 }
 
-func version() {
-	fmt.Printf("I don't know my version yet.\n")
-}
-
-func help() {
-	fmt.Printf("I can't help you yet.\n")
+func cmdVersion() {
+	fmt.Printf("ro version %s\n", version)
 }
