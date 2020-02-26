@@ -74,7 +74,7 @@ func (logger *Logger) Fatal(msg string, args ...interface{}) {
 }
 
 func (logger *Logger) log(level int, msg string, args ...interface{}) {
-	// Avoid any work if unecessary
+	// Avoid any work if unnecessary
 	if level < logger.level {
 		return
 	}
