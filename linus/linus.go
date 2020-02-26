@@ -5,4 +5,4 @@
 
 package linus
 
-// Linus handles file system operations.
+// Linus handles file system operations for Ro.
