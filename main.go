@@ -12,7 +12,16 @@ import (
 )
 
 func main() {
+	// Add expected values
+	donna.ExpectGlobalFlag("verbose")
+	donna.ExpectGlobalFlag("quiet")
+
+	// Parse and validate global values
 	donna.Parse()
+	name, ok := donna.ValidateGlobal()
+	if !ok {
+		weems.Fatal("Unexpected global flag/option '%s'.", name)
+	}
 
 	// Handle logging level flags; verbose overrides quiet by design
 	if donna.HasGlobalFlag("quiet") {

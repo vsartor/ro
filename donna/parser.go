@@ -28,12 +28,11 @@ func ParseGlobalOption(arg string, idx *int) {
 
 	// Assert that option received an associated value
 	if *idx == len(os.Args)-1 {
-		weems.Fatal("Option '%s' has no associated value.", optionName)
+		weems.Fatal("Global option '%s' has no associated value.", optionName)
 	}
 
-	// Global options are invalid
 	optionValue := os.Args[*idx+1]
-	weems.Fatal("Invalid global option '%s' with value '%s'.", optionName, optionValue)
+	globalOptions[optionName] = optionValue
 
 	*idx += 2
 }
