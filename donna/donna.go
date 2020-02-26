@@ -5,6 +5,8 @@
 
 package donna
 
+import "ro/weems"
+
 // Donna Paulsen handles command line arguments for Ro.
 
 // It handles two different types of arguments: options and arguments.
@@ -18,3 +20,9 @@ package donna
 // There are two kinds of options, global options, handled at startup and
 // consumed by ro's entry point, and command specific options which are
 // handled by the executing code.
+
+var logger weems.Logger
+
+func init() {
+	logger = weems.NewLogger("donna")
+}

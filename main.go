@@ -11,6 +11,12 @@ import (
 	"ro/weems"
 )
 
+var logger weems.Logger
+
+func init() {
+	logger = weems.NewLogger("ro")
+}
+
 func main() {
 	// Add expected values
 	donna.ExpectGlobalFlag("verbose")
@@ -20,22 +26,24 @@ func main() {
 	donna.Parse()
 	name, ok := donna.ValidateGlobal()
 	if !ok {
-		weems.Fatal("Unexpected global flag/option '%s'.", name)
+		logger.Fatal("Unexpected global flag/option '%s'.", name)
 	}
 
 	// Handle logging level flags; verbose overrides quiet by design
 	if donna.HasGlobalFlag("quiet") {
-		weems.SetQuiet()
+		weems.SetGlobalLevel(weems.ERROR)
+		logger.SetLevel(weems.ERROR)
 	}
 	if donna.HasGlobalFlag("verbose") {
-		weems.SetVerbose()
+		weems.SetGlobalLevel(weems.INFO)
+		logger.SetLevel(weems.INFO)
 	}
 
-	weems.Info("Ro's method dispatching is beginning.")
+	logger.Info("Method dispatching is beginning.")
 
 	method, ok := donna.NextArg()
 	if !ok {
-		weems.Fatal("Expected an argument.")
+		logger.Fatal("Expected an argument.")
 	}
 
 	switch method {
@@ -44,7 +52,7 @@ func main() {
 	case "help":
 		help()
 	default:
-		weems.Fatal("Unexpected argument '%s'.", method)
+		logger.Fatal("Unexpected argument '%s'.", method)
 	}
 }
 

@@ -7,7 +7,6 @@ package donna
 
 import (
 	"os"
-	"ro/weems"
 	"strings"
 )
 
@@ -28,7 +27,7 @@ func ParseGlobalOption(arg string, idx *int) {
 
 	// Assert that option received an associated value
 	if *idx == len(os.Args)-1 {
-		weems.Fatal("Global option '%s' has no associated value.", optionName)
+		logger.Fatal("Global option '%s' has no associated value.", optionName)
 	}
 
 	optionValue := os.Args[*idx+1]
@@ -42,7 +41,7 @@ func ParseOption(arg string, idx *int) {
 
 	// Assert that option received an associated value
 	if *idx == len(os.Args)-1 {
-		weems.Fatal("Option '%s' has no associated value.", optionName)
+		logger.Fatal("Option '%s' has no associated value.", optionName)
 	}
 
 	optionValue := os.Args[*idx+1]
@@ -92,7 +91,7 @@ func Parse() {
 			ParseOption(arg, &idx)
 		} else {
 			// Should not have arguments at this point.
-			weems.Fatal("Unexpected argument '%s' after flags/options.", arg)
+			logger.Fatal("Unexpected argument '%s' after flags/options.", arg)
 		}
 	}
 }

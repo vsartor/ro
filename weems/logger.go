@@ -28,20 +28,26 @@ const (
 )
 
 var msgLevelString = [...]string{
-	"\033[34m\033[40mINFO \033[0m",
+	"\033[94m\033[40mINFO \033[0m",
 	"\033[33m\033[40mWARN \033[0m",
 	"\033[31m\033[40mERROR\033[0m",
 	"\033[37m\033[101mFATAL\033[0m",
 }
 
 type Logger struct {
+	name       string
 	level      int
 	writeMutex sync.Mutex
 	output     io.Writer
 }
 
-func NewLogger(level int) Logger {
-	return Logger{level: level, output: os.Stderr}
+func NewLogger(name string) Logger {
+	return Logger{
+		name:       name,
+		level:      globalLevel,
+		writeMutex: sync.Mutex{},
+		output:     globalWriter,
+	}
 }
 
 func (logger *Logger) SetWriter(writer io.Writer) {
@@ -54,6 +60,14 @@ func (logger Logger) GetLevel() int {
 
 func (logger *Logger) SetLevel(level int) {
 	logger.level = level
+}
+
+func (logger *Logger) SetVerbose() {
+	logger.SetLevel(INFO)
+}
+
+func (logger *Logger) SetQuiet() {
+	logger.SetLevel(ERROR)
 }
 
 func (logger *Logger) Info(msg string, args ...interface{}) {
@@ -80,7 +94,7 @@ func (logger *Logger) log(level int, msg string, args ...interface{}) {
 	}
 
 	// Make sure we get timestamp as early as possible
-	now := time.Now()
+	now := time.Now().Format(timeFormat)
 
 	// Get filename and line number by fetching runtime information
 	_, filename, line, ok := runtime.Caller(callDepth)
@@ -91,11 +105,9 @@ func (logger *Logger) log(level int, msg string, args ...interface{}) {
 		filename = filepath.Base(filename)
 	}
 
-	// String
-
 	// Generate logger format string
 	format := fmt.Sprintf(
-		"%s %s:%d %s %%s\n", now.Format(timeFormat), filename, line, msgLevelString[level],
+		"%s %s %8s \033[94m%s:%d\033[0m %%s\n", now, msgLevelString[level], logger.name, filename, line,
 	)
 
 	// Format string if necessary
