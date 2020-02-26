@@ -25,10 +25,7 @@ func main() {
 
 	// Parse and validate global values
 	donna.Parse()
-	name, ok := donna.ValidateGlobal()
-	if !ok {
-		logger.Fatal("Unexpected global flag/option '%s'.", name)
-	}
+	donna.ValidateGlobal()
 
 	// Handle logging level flags; verbose overrides quiet by design
 	if donna.HasGlobalFlag("quiet") {

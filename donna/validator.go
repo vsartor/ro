@@ -35,34 +35,32 @@ func validate(
 	expectedFlags []string,
 	options map[string]string,
 	expectedOptions []string,
-) (string, bool) {
+) {
 	for _, flag := range flags {
 		if !isExpected(flag, expectedFlags) {
-			return flag, false
+			logger.Fatal("Unexpected flag '%s'.", flag)
 		}
 	}
 
 	for option, _ := range options {
 		if !isExpected(option, expectedOptions) {
-			return option, false
+			logger.Fatal("Unexpected option '%s'.", option)
 		}
 	}
-
-	return "", true
 }
 
 // Validates that only expected global flags/options were found.
 // Returns the name of the unexpected flag/option and a boolean value
 // which is true if there were no errors.
-func ValidateGlobal() (string, bool) {
-	return validate(globalFlags, expectedGlobalFlags, globalOptions, expectedGlobalOptions)
+func ValidateGlobal() {
+	validate(globalFlags, expectedGlobalFlags, globalOptions, expectedGlobalOptions)
 }
 
 // Validates that only command-specific flag/options were found.
 // Returns the name of the unexpected flag/option and a boolean value
 // which is true if there were no errors.
-func ValidateLocal() (string, bool) {
-	return validate(flags, expectedFlags, options, expectedOptions)
+func ValidateLocal() {
+	validate(flags, expectedFlags, options, expectedOptions)
 }
 
 // Registers the name of a global flag.
