@@ -17,7 +17,7 @@ import (
 const (
 	TRACE = iota
 	INFO
-	WARNING
+	WARN
 	ERROR
 	FATAL
 )
@@ -35,30 +35,32 @@ var msgLevelString = [...]string{
 	"\033[37m\033[101mFATAL\033[0m",
 }
 
+var loggingLevels = [...]int{TRACE, INFO, WARN, ERROR, FATAL}
+
 type Logger struct {
 	name       string
-	level      int
-	output     io.Writer
+	level      *int
+	output     *io.Writer
 }
 
 func NewLogger(name string) Logger {
 	return Logger{
 		name:       name,
-		level:      globalLevel,
-		output:     globalWriter,
+		level:      &globalLevel,
+		output:     &globalWriter,
 	}
 }
 
-func (logger *Logger) SetWriter(writer io.Writer) {
+func (logger *Logger) SetWriter(writer *io.Writer) {
 	logger.output = writer
 }
 
 func (logger Logger) GetLevel() int {
-	return logger.level
+	return *logger.level
 }
 
 func (logger *Logger) SetLevel(level int) {
-	logger.level = level
+	logger.level = &loggingLevels[level]
 }
 
 func (logger *Logger) Trace(msg string, args ...interface{}) {
@@ -70,7 +72,7 @@ func (logger *Logger) Info(msg string, args ...interface{}) {
 }
 
 func (logger *Logger) Warn(msg string, args ...interface{}) {
-	logger.log(WARNING, msg, args...)
+	logger.log(WARN, msg, args...)
 }
 
 func (logger *Logger) Error(msg string, args ...interface{}) {
@@ -84,7 +86,7 @@ func (logger *Logger) Fatal(msg string, args ...interface{}) {
 
 func (logger *Logger) log(level int, msg string, args ...interface{}) {
 	// Avoid any work if unnecessary
-	if level < logger.level {
+	if level < *logger.level {
 		return
 	}
 
@@ -113,6 +115,6 @@ func (logger *Logger) log(level int, msg string, args ...interface{}) {
 
 	// Perform the writing operation, thread-safely
 	globalMutex.Lock()
-	_, _ = fmt.Fprintf(logger.output, format, fmtMsg)
+	_, _ = fmt.Fprintf(*logger.output, format, fmtMsg)
 	globalMutex.Unlock()
 }

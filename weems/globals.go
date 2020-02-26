@@ -13,7 +13,7 @@ import (
 
 var (
 	globalMutex  sync.Mutex
-	globalLevel            = WARNING
+	globalLevel            = WARN
 	globalWriter io.Writer = os.Stderr
 )
 
