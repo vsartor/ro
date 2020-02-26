@@ -26,6 +26,8 @@ func Cmd() {
 	switch command {
 	case "cluster":
 		clusterCmd()
+	case "upload":
+		uploadCmd()
 	default:
 		logger.Fatal("Unexpected argument: %s", command)
 	}
