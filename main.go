@@ -8,6 +8,7 @@ package main
 import (
 	"fmt"
 	"ro/donna"
+	"ro/tools/blogo"
 	"ro/weems"
 )
 
@@ -47,6 +48,9 @@ func main() {
 	switch method {
 	case "version":
 		cmdVersion()
+	case "blogo":
+		logger.Info("Dispatching to blogo.")
+		blogo.Cmd()
 	default:
 		logger.Fatal("Unexpected argument '%s'.", method)
 	}

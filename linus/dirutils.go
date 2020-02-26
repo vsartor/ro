@@ -67,7 +67,7 @@ func CopyDir(srcPath, dstPath string) error {
 	// Make sure that the destination directory does not yet exist.
 	// This means that stat'ing this path should raise a "does not
 	// exist" error.
-	dst, err := os.Stat(dstPath)
+	_, err = os.Stat(dstPath)
 	if err == nil {
 		return fmt.Errorf("path already exists: %s", dstPath)
 	}
