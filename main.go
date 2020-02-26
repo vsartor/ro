@@ -21,6 +21,7 @@ func init() {
 
 func main() {
 	// Add expected values
+	donna.ExpectGlobalFlag("trace")
 	donna.ExpectGlobalFlag("verbose")
 	donna.ExpectGlobalFlag("quiet")
 
@@ -28,12 +29,15 @@ func main() {
 	donna.Parse()
 	donna.ValidateGlobal()
 
-	// Handle logging level flags; verbose overrides quiet by design
+	// Handle logging level flags; most verbose flags have precedence on purpose
 	if donna.HasGlobalFlag("quiet") {
 		weems.SetGlobalLevel(weems.ERROR)
 	}
 	if donna.HasGlobalFlag("verbose") {
 		weems.SetGlobalLevel(weems.INFO)
+	}
+	if donna.HasGlobalFlag("trace") {
+		weems.SetGlobalLevel(weems.TRACE)
 	}
 
 	method, ok := donna.NextArg()
