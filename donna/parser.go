@@ -23,12 +23,12 @@ func ParseGlobalOption(arg string, idx *int) {
 
 	// Assert that option received an associated value
 	if *idx == len(os.Args)-1 {
-		weems.Critical("Option '%s' has no associated value.", optionName)
+		weems.Fatal("Option '%s' has no associated value.", optionName)
 	}
 
 	// Global options are invalid
 	optionValue := os.Args[*idx+1]
-	weems.Critical("Invalid global option '%s' with value '%s'.", optionName, optionValue)
+	weems.Fatal("Invalid global option '%s' with value '%s'.", optionName, optionValue)
 
 	*idx += 2
 }
@@ -38,7 +38,7 @@ func ParseOption(arg string, idx *int) {
 
 	// Assert that option received an associated value
 	if *idx == len(os.Args)-1 {
-		weems.Critical("Option '%s' has no associated value.", optionName)
+		weems.Fatal("Option '%s' has no associated value.", optionName)
 	}
 
 	optionValue := os.Args[*idx+1]
@@ -88,7 +88,7 @@ func Parse() {
 			ParseOption(arg, &idx)
 		} else {
 			// Should not have arguments at this point.
-			weems.Critical("Unexpected argument '%s' after flags/options.", arg)
+			weems.Fatal("Unexpected argument '%s' after flags/options.", arg)
 		}
 	}
 }

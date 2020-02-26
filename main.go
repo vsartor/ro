@@ -21,7 +21,7 @@ func main() {
 
 	method, ok := donna.NextArg()
 	if !ok {
-		weems.Critical("Expected an argument.")
+		weems.Fatal("Expected an argument.")
 	}
 
 	switch method {
@@ -30,7 +30,7 @@ func main() {
 	case "help":
 		help()
 	default:
-		weems.Critical("Unexpected argument '%s'.", method)
+		weems.Fatal("Unexpected argument '%s'.", method)
 	}
 }
 

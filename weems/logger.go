@@ -1,49 +1,101 @@
 package weems
 
 import (
-	"github.com/juju/loggo"
-	"github.com/juju/loggo/loggocolor"
+	"fmt"
+	"io"
 	"os"
+	"path/filepath"
+	"runtime"
+	"sync"
+	"time"
 )
 
-var logger loggo.Logger
+const (
+	INFO = iota
+	WARNING
+	ERROR
+	FATAL
+)
 
-// Initialize the logger at startup.
-// Any problems with Weems startup should be reason for the
-// program panicking.
-func init() {
-	_, err := loggo.ReplaceDefaultWriter(loggocolor.NewColorWriter(os.Stdout))
-	if err != nil {
-		panic("Failure initializing Weem's logger.")
-	}
+const (
+	callDepth  = 3
+	timeFormat = "15:04:05"
+)
 
-	logger = loggo.GetLogger("Weems")
-
-	// Default logger level should be warning
-	logger.SetLogLevel(loggo.WARNING)
+var msgLevelString = [...]string{
+	"\033[34m\033[40mINFO \033[0m",
+	"\033[33m\033[40mWARN \033[0m",
+	"\033[31m\033[40mERROR\033[0m",
+	"\033[37m\033[101mFATAL\033[0m",
 }
 
-func Critical(msg string, args ...interface{}) {
-	logger.Criticalf(msg, args...)
+type Logger struct {
+	level      int
+	writeMutex sync.Mutex
+	output     io.Writer
+}
+
+func NewLogger(level int) Logger {
+	return Logger{level: level, output: os.Stderr}
+}
+
+func (logger *Logger) SetWriter(writer io.Writer) {
+	logger.output = writer
+}
+
+func (logger Logger) GetLevel() int {
+	return logger.level
+}
+
+func (logger *Logger) SetLevel(level int) {
+	logger.level = level
+}
+
+func (logger *Logger) Info(msg string, args ...interface{}) {
+	logger.log(INFO, msg, args...)
+}
+
+func (logger *Logger) Warn(msg string, args ...interface{}) {
+	logger.log(WARNING, msg, args...)
+}
+
+func (logger *Logger) Error(msg string, args ...interface{}) {
+	logger.log(ERROR, msg, args...)
+}
+
+func (logger *Logger) Fatal(msg string, args ...interface{}) {
+	logger.log(FATAL, msg, args...)
 	os.Exit(1)
 }
 
-func Error(msg string, args ...interface{}) {
-	logger.Errorf(msg, args...)
-}
+func (logger *Logger) log(level int, msg string, args ...interface{}) {
+	// Make sure we get timestamp as early as possible
+	now := time.Now()
 
-func Warn(msg string, args ...interface{}) {
-	logger.Warningf(msg, args...)
-}
+	// Get filename and line number by fetching runtime information
+	_, filename, line, ok := runtime.Caller(callDepth)
+	if !ok {
+		filename = "<unknown>.go"
+		line = 0
+	} else {
+		filename = filepath.Base(filename)
+	}
 
-func Info(msg string, args ...interface{}) {
-	logger.Infof(msg, args...)
-}
+	// String
 
-func SetVerbose() {
-	logger.SetLogLevel(loggo.INFO)
-}
+	// Generate logger format string
+	format := fmt.Sprintf(
+		"%s %s:%d %s %%s\n", now.Format(timeFormat), filename, line, msgLevelString[level],
+	)
 
-func SetQuiet() {
-	logger.SetLogLevel(loggo.ERROR)
+	// Format string if necessary
+	fmtMsg := msg
+	if len(args) > 0 {
+		fmtMsg = fmt.Sprintf(msg, args...)
+	}
+
+	// Perform the writing operation, thread-safely
+	logger.writeMutex.Lock()
+	_, _ = fmt.Fprintf(logger.output, format, fmtMsg)
+	logger.writeMutex.Unlock()
 }
