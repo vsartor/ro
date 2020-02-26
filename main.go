@@ -7,9 +7,9 @@ package main
 
 import (
 	"fmt"
-	"ro/donna"
-	"ro/tools/blogo"
-	"ro/weems"
+	"github.com/vsartor/ro/donna"
+	"github.com/vsartor/ro/tools/blogo"
+	"github.com/vsartor/ro/weems"
 )
 
 var logger weems.Logger

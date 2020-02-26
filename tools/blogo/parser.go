@@ -7,9 +7,9 @@ package blogo
 
 import (
 	"fmt"
+	"github.com/vsartor/ro/linus"
+	"github.com/vsartor/ro/tools/blogo/pages"
 	"path/filepath"
-	"ro/linus"
-	"ro/tools/blogo/pages"
 	"strconv"
 	"strings"
 )

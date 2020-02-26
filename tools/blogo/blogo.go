@@ -6,9 +6,9 @@
 package blogo
 
 import (
+	"github.com/vsartor/ro/donna"
+	"github.com/vsartor/ro/weems"
 	"os"
-	"ro/donna"
-	"ro/weems"
 )
 
 // Blogo is the tool used to compile my blog's source files into the

@@ -5,7 +5,7 @@
 
 package donna
 
-import "ro/weems"
+import "github.com/vsartor/ro/weems"
 
 // Donna handles command line arguments for Ro.
 //

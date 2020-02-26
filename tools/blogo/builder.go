@@ -6,11 +6,11 @@
 package blogo
 
 import (
+	"github.com/vsartor/ro/linus"
+	"github.com/vsartor/ro/tools/blogo/pages"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"ro/linus"
-	"ro/tools/blogo/pages"
 	"sort"
 	"strings"
 )
