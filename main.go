@@ -31,11 +31,9 @@ func main() {
 	// Handle logging level flags; verbose overrides quiet by design
 	if donna.HasGlobalFlag("quiet") {
 		weems.SetGlobalLevel(weems.ERROR)
-		logger.SetLevel(weems.ERROR)
 	}
 	if donna.HasGlobalFlag("verbose") {
 		weems.SetGlobalLevel(weems.INFO)
-		logger.SetLevel(weems.INFO)
 	}
 
 	method, ok := donna.NextArg()
