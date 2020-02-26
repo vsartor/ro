@@ -11,6 +11,30 @@ Ro and the tools.
 The tools are contained in the aptly named "tools" directory, and implement functionality that can be used
 through the command line interface.
 
+### gcp
+
+gcp is a tool for quick operations on the Google Cloud Platform.
+
+#### cluster
+
+The `cluster` command sends a request to create a Dataproc cluster with some useful configurations.
+Command usage follows the pattern:
+```
+ro gcp cluster [-name <clusterName>] -project <projetId> -bucket <bucketName> -cred <credentialPath> -w <numWorkers> -c <numCores> [--highmem]
+```
+
+The parameters have the following effects:
+* `name`: The name of the cluster. Defaults to "ro-cluster" if not given.
+* `bucket`: The name of the bucket for cluster setup and Jupyter notebook files.
+* `cred`: Path to the JSON credentials file.
+* `w`: The number of workers.
+* `c`: The number of cores per worker.
+* `highMem`: Flag indicating if cores should have higher memory than default.
+
+This command attempts to compute appropriate master node configuration depending on the number of workers, and also
+provides better default settings for spark configurations than Dataproc's. It also enables HTTP port access and
+Jupyter notebooks by default. 
+
 ### blogo
 
 blogo is the tool used to compile [my blog](https://vsartor.com)'s source files into the appropriate structure.
