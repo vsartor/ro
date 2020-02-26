@@ -18,7 +18,6 @@ func uploadCmd() {
 
 	donna.ExpectOption("cred")
 	donna.ExpectOption("bucket")
-	donna.ExpectOption("project")
 	donna.ValidateLocal()
 
 	credential, ok := donna.GetOption("cred")

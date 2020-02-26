@@ -35,6 +35,20 @@ This command attempts to compute appropriate master node configuration depending
 provides better default settings for spark configurations than Dataproc's. It also enables HTTP port access and
 Jupyter notebooks by default. 
 
+#### upload
+
+The `upload` command uploads either a file or directory (recursively) to a Google Cloud Storage bucket.
+Command usage follows the pattern:
+```
+ro gcp upload <srcPath> <dstPath> -bucket <bucketName> -cred <credentialPath> 
+``` 
+
+The parameters have the following effects:
+* `srcPath`: Path of the source file or directory to be uploaded.
+* `dstPath`: Relative path of the destination file/directory relative to the bucket root.
+* `bucket`: Name of the target bucket.
+* `cred`: Path to the JSON credential file.
+
 ### blogo
 
 blogo is the tool used to compile [my blog](https://vsartor.com)'s source files into the appropriate structure.
