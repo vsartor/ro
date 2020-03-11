@@ -19,48 +19,41 @@ func init() {
 	expectedOptions = make([]string, 0)
 }
 
-// Returns whether flag name is expected.
-func isExpected(name string, expectedName []string) bool {
-	for _, flag := range expectedName {
+// Validates that the parameter was expected, also returning
+// a boolean indicating if the name refers to a flag.
+func validate(name string) (bool, bool) {
+	for _, flag := range expectedFlags {
 		if flag == name {
-			return true
-		}
-	}
-	return false
-}
-
-// Performs generalized validation logic.
-func validate(
-	flags []string,
-	expectedFlags []string,
-	options map[string]string,
-	expectedOptions []string,
-) {
-	for _, flag := range flags {
-		if !isExpected(flag, expectedFlags) {
-			logger.Fatal("Unexpected flag '%s'.", flag)
+			return true, true
 		}
 	}
 
-	for option, _ := range options {
-		if !isExpected(option, expectedOptions) {
-			logger.Fatal("Unexpected option '%s'.", option)
+	for _, option := range expectedOptions {
+		if option == name {
+			return true, false
 		}
 	}
+
+	return false, false
 }
 
-// Validates that only expected global flags/options were found.
-// Returns the name of the unexpected flag/option and a boolean value
-// which is true if there were no errors.
-func ValidateGlobal() {
-	validate(globalFlags, expectedGlobalFlags, globalOptions, expectedGlobalOptions)
-}
+// Validates that the parameter was expected, also returning
+// a boolean indicating if the name refers to a flag. Performs
+// the operation for global parameters.
+func validateGlobal(name string) (bool, bool) {
+	for _, flag := range expectedGlobalFlags {
+		if flag == name {
+			return true, true
+		}
+	}
 
-// Validates that only command-specific flag/options were found.
-// Returns the name of the unexpected flag/option and a boolean value
-// which is true if there were no errors.
-func ValidateLocal() {
-	validate(flags, expectedFlags, options, expectedOptions)
+	for _, option := range expectedGlobalOptions {
+		if option == name {
+			return true, false
+		}
+	}
+
+	return false, false
 }
 
 // Registers the name of a global flag.

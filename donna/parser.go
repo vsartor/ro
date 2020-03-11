@@ -10,85 +10,96 @@ import (
 	"strings"
 )
 
-func ParseGlobalFlag(arg string, idx *int) {
-	flagName := strings.TrimPrefix(arg, "--")
-	globalFlags = append(globalFlags, flagName)
-	*idx++
-}
+var localParametersIdx int
 
-func ParseFlag(arg string, idx *int) {
-	flagName := strings.TrimPrefix(arg, "--")
-	flags = append(flags, flagName)
-	*idx++
-}
+func parseGlobalArg(arg string, idx *int) {
+	argName := strings.TrimPrefix(arg, "--")
 
-func ParseGlobalOption(arg string, idx *int) {
-	optionName := strings.TrimPrefix(arg, "-")
+	isExpected, isFlag := validate(argName)
+
+	if !isExpected {
+		logger.Fatal("Unexpected argument '%s'.", arg)
+	}
+
+	if isFlag {
+		globalFlags = append(globalFlags, argName)
+		*idx++
+		return
+	}
 
 	// Assert that option received an associated value
 	if *idx == len(os.Args)-1 {
-		logger.Fatal("Global option '%s' has no associated value.", optionName)
+		logger.Fatal("Global option '%s' has no associated value.", argName)
 	}
 
 	optionValue := os.Args[*idx+1]
-	globalOptions[optionName] = optionValue
-
+	globalOptions[argName] = optionValue
 	*idx += 2
 }
 
-func ParseOption(arg string, idx *int) {
-	optionName := strings.TrimPrefix(arg, "-")
+func parseLocalArg(arg string, idx *int) {
+	argName := strings.TrimPrefix(arg, "--")
+
+	isExpected, isFlag := validate(argName)
+
+	if !isExpected {
+		logger.Fatal("Unexpected argument '%s'.", arg)
+	}
+
+	if isFlag {
+		flags = append(flags, argName)
+		*idx++
+		return
+	}
 
 	// Assert that option received an associated value
 	if *idx == len(os.Args)-1 {
-		logger.Fatal("Option '%s' has no associated value.", optionName)
+		logger.Fatal("Option '%s' has no associated value.", argName)
 	}
 
 	optionValue := os.Args[*idx+1]
-	options[optionName] = optionValue
-
+	options[argName] = optionValue
 	*idx += 2
 }
 
-// Parses command line arguments, initializing Donna's variables
-// storing options and arguments.
-func Parse() {
-	// Parse global values
+// Parse global command line arguments.
+func ParseGlobal() {
 	idx := 1
 	for idx < len(os.Args) {
 		arg := os.Args[idx]
 
 		if strings.HasPrefix(arg, "--") {
-			ParseGlobalFlag(arg, &idx)
-		} else if strings.HasPrefix(arg, "-") {
-			ParseGlobalOption(arg, &idx)
+			parseGlobalArg(arg, &idx)
 		} else {
-			// Found an argument; stop global parsing.
+			// Found a regular Argument. This means the end of
+			// global parameters.
 			break
 		}
 	}
 
-	// Parse arguments
+	// Parse regular Arguments
 	for idx < len(os.Args) {
 		arg := os.Args[idx]
 
 		if strings.HasPrefix(arg, "-") {
-			// Found a flag/option; stop argument parsing.
+			// Found a flag/option; stop global parsing.
+			localParametersIdx = idx
 			break
 		} else {
 			args.arguments = append(args.arguments, arg)
 			idx++
 		}
 	}
+}
 
-	// Parse flags/options
+// Parses local command line arguments.
+func Parse() {
+	idx := localParametersIdx
 	for idx < len(os.Args) {
 		arg := os.Args[idx]
 
 		if strings.HasPrefix(arg, "--") {
-			ParseFlag(arg, &idx)
-		} else if strings.HasPrefix(arg, "-") {
-			ParseOption(arg, &idx)
+			parseLocalArg(arg, &idx)
 		} else {
 			// Should not have arguments at this point.
 			logger.Fatal("Unexpected argument '%s' after flags/options.", arg)

@@ -26,8 +26,7 @@ func main() {
 	donna.ExpectGlobalFlag("quiet")
 
 	// Parse and validate global values
-	donna.Parse()
-	donna.ValidateGlobal()
+	donna.ParseGlobal()
 
 	// Handle logging level flags; most verbose flags have precedence on purpose
 	if donna.HasGlobalFlag("quiet") {

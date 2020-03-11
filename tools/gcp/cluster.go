@@ -165,7 +165,7 @@ func clusterCmd() {
 	donna.ExpectOption("c")
 	donna.ExpectOption("w")
 	donna.ExpectFlag("highmem")
-	donna.ValidateLocal()
+	donna.Parse()
 
 	projectName, ok := donna.GetOption("project")
 	if !ok {

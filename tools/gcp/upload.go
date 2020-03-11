@@ -15,10 +15,9 @@ import (
 
 func uploadCmd() {
 	// Handle command line parameters
-
 	donna.ExpectOption("cred")
 	donna.ExpectOption("bucket")
-	donna.ValidateLocal()
+	donna.Parse()
 
 	credential, ok := donna.GetOption("cred")
 	if !ok {

@@ -26,7 +26,7 @@ func Cmd() {
 
 	// Register this commands flags/options and validate them
 	donna.ExpectFlag("local")
-	donna.ValidateLocal()
+	donna.Parse()
 
 	// Attempt to fetch srcDir and dstDir through Donna arguments,
 	// and if not possible attempt to fetch from OS environment
