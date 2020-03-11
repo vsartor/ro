@@ -98,27 +98,28 @@ are used both by Ro and by the included tools, meaning that tools share common f
 
 Donna handles command line arguments.
 
-It separates command line parameters into three different types: flags, options and arguments.
+It separates command line arguments into two different types: parameters and regular arguments.
 
-_Flags_ are parameters that start with two dashes, and their presence/absence indicates their value.
-_Options_ are parameters that start with a single dash, and take in the following parameter as its
-associated value. _Arguments_ are regular names.
+_Parameters_ are arguments passed with the double dash preffix: these can either be _flags_, where their
+presence/absence indicates their value, or _options_, which have an associated value. _Args_ are regular
+names which indicate ro's execution path.
 
 Options and flags can either be global, relating to Ro's own operations, or command specific. Global
 flags/options precede the arguments and command flags/options come after all arguments. To illustrate,
 this is Ro's invocation map.
+
 ```
-ro [global flags/options] <arguments> [command flags/options]
+ro [global parameters] <args> [command parameters]
 ```
 
 Flags and options are validated, meaning invalid flags/options will cause Donna to log a fatal message.
 Each tool must specify which options and flags they expect to receive through Donna's `func ExpectFlag(string)`
 and `func ExpectOption(string)` and, following this specification, the tool's entry point must call Donna's
-`func ValidateLocal(string)`.
+`func Parse()` for command parameter parsing and validation.
 
 Presence of flags can be checked with Donna's `func HasFlag(string) bool` and options values can be checked with
 Donna's `func getOption(string) (string, bool)` where the second value indicates whether the option was passed and
-the first value is the associated value if the option was given.
+the first value is its associated value, if the option was given.
 
 Arguments are consumed as tokens, one by one, by invoking Donna's `func NextArg() (string, bool)`, where the second
 value indicates whether there are still arguments to be consumed, and the first value is the consumed argument in
