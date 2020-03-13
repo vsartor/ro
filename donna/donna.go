@@ -5,14 +5,4 @@
 
 package donna
 
-import "github.com/vsartor/ro/weems"
-
 // Donna handles command line arguments for Ro.
-
-// TODO: Remove all instances of logger in Donna.
-
-var logger weems.Logger
-
-func init() {
-	logger = weems.NewLogger("donna")
-}
