@@ -57,4 +57,3 @@ func (page *Page) Write(path string) error {
 	}
 	return nil
 }
-

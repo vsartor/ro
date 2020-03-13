@@ -11,6 +11,7 @@ import (
 	"github.com/vsartor/ro/tools/blogo"
 	"github.com/vsartor/ro/tools/gcp"
 	"github.com/vsartor/ro/weems"
+	"os"
 )
 
 var logger weems.Logger
@@ -26,7 +27,11 @@ func main() {
 	donna.ExpectGlobalFlag("quiet")
 
 	// Parse and validate global values
-	donna.ParseGlobal()
+	err := donna.ParseGlobal()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 
 	// Handle logging level flags; most verbose flags have precedence on purpose
 	if donna.HasGlobalFlag("quiet") {
@@ -41,20 +46,22 @@ func main() {
 
 	method, ok := donna.NextArg()
 	if !ok {
-		logger.Fatal("Expected an argument.")
+		fmt.Printf("No commands given.\n")
+		os.Exit(1)
 	}
 
 	switch method {
 	case "version":
 		cmdVersion()
 	case "blogo":
-		logger.Info("Dispatching to blogo.")
+		logger.Trace("Dispatching to blogo.")
 		blogo.Cmd()
 	case "gcp":
-		logger.Info("Dispatching to gcp.")
+		logger.Trace("Dispatching to gcp.")
 		gcp.Cmd()
 	default:
-		logger.Fatal("Unexpected argument '%s'.", method)
+		fmt.Printf("Unexpected command '%s'.\n", method)
+		os.Exit(1)
 	}
 }
 

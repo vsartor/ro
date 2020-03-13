@@ -38,16 +38,16 @@ var msgLevelString = [...]string{
 var loggingLevels = [...]int{TRACE, INFO, WARN, ERROR, FATAL}
 
 type Logger struct {
-	name       string
-	level      *int
-	output     *io.Writer
+	name   string
+	level  *int
+	output *io.Writer
 }
 
 func NewLogger(name string) Logger {
 	return Logger{
-		name:       name,
-		level:      &globalLevel,
-		output:     &globalWriter,
+		name:   name,
+		level:  &globalLevel,
+		output: &globalWriter,
 	}
 }
 

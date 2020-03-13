@@ -8,33 +8,44 @@ package gcp
 import (
 	"cloud.google.com/go/storage"
 	"context"
+	"fmt"
 	"github.com/vsartor/ro/donna"
 	"github.com/vsartor/ro/linus"
 	"google.golang.org/api/option"
+	"os"
 )
 
 func uploadCmd() {
 	// Handle command line parameters
 	donna.ExpectOption("cred")
 	donna.ExpectOption("bucket")
-	donna.Parse()
+	err := donna.Parse()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 
+	// TODO: Get this from Rich
 	credential, ok := donna.GetOption("cred")
 	if !ok {
-		logger.Fatal("Did not receive credential.")
+		fmt.Println("Did not receive credential file path.")
+		os.Exit(1)
 	}
 	bucket, ok := donna.GetOption("bucket")
 	if !ok {
-		logger.Fatal("Did not receive bucket.")
+		fmt.Println("Did not receive bucket.")
+		os.Exit(1)
 	}
 
 	srcPath, ok := donna.NextArg()
 	if !ok {
-		logger.Fatal("Expected source path as argument.")
+		fmt.Println("Expected source path as argument.")
+		os.Exit(1)
 	}
 	dstPath, ok := donna.NextArg()
 	if !ok {
-		logger.Fatal("Expected destination path as argument.")
+		fmt.Println("Expected destination path as argument.")
+		os.Exit(1)
 	}
 
 	// Create client

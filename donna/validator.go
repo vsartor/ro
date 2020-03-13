@@ -8,20 +8,31 @@ package donna
 var (
 	expectedGlobalFlags   []string
 	expectedGlobalOptions []string
-	expectedFlags         []string
-	expectedOptions       []string
+	expectedLocalFlags    []string
+	expectedLocalOptions  []string
 )
 
 func init() {
 	expectedGlobalFlags = make([]string, 0)
 	expectedGlobalOptions = make([]string, 0)
-	expectedFlags = make([]string, 0)
-	expectedOptions = make([]string, 0)
+	expectedLocalFlags = make([]string, 0)
+	expectedLocalOptions = make([]string, 0)
 }
 
 // Validates that the parameter was expected, also returning
 // a boolean indicating if the name refers to a flag.
-func validate(name string) (bool, bool) {
+func validate(name string, global bool) (bool, bool) {
+	var expectedFlags []string
+	var expectedOptions []string
+
+	if global {
+		expectedFlags = expectedGlobalFlags
+		expectedOptions = expectedGlobalOptions
+	} else {
+		expectedFlags = expectedLocalFlags
+		expectedOptions = expectedLocalOptions
+	}
+
 	for _, flag := range expectedFlags {
 		if flag == name {
 			return true, true
@@ -37,25 +48,6 @@ func validate(name string) (bool, bool) {
 	return false, false
 }
 
-// Validates that the parameter was expected, also returning
-// a boolean indicating if the name refers to a flag. Performs
-// the operation for global parameters.
-func validateGlobal(name string) (bool, bool) {
-	for _, flag := range expectedGlobalFlags {
-		if flag == name {
-			return true, true
-		}
-	}
-
-	for _, option := range expectedGlobalOptions {
-		if option == name {
-			return true, false
-		}
-	}
-
-	return false, false
-}
-
 // Registers the name of a global flag.
 func ExpectGlobalFlag(name string) {
 	expectedGlobalFlags = append(expectedGlobalFlags, name)
@@ -63,7 +55,7 @@ func ExpectGlobalFlag(name string) {
 
 // Registers the name of a command flag.
 func ExpectFlag(name string) {
-	expectedFlags = append(expectedFlags, name)
+	expectedLocalFlags = append(expectedLocalFlags, name)
 }
 
 // Registers the name of a global option.
@@ -73,5 +65,5 @@ func ExpectGlobalOption(name string) {
 
 // Registers the name of a command option.
 func ExpectOption(name string) {
-	expectedOptions = append(expectedOptions, name)
+	expectedLocalOptions = append(expectedLocalOptions, name)
 }

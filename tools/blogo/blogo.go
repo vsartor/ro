@@ -6,6 +6,7 @@
 package blogo
 
 import (
+	"fmt"
 	"github.com/vsartor/ro/donna"
 	"github.com/vsartor/ro/weems"
 	"os"
@@ -26,7 +27,11 @@ func Cmd() {
 
 	// Register this commands flags/options and validate them
 	donna.ExpectFlag("local")
-	donna.Parse()
+	err := donna.Parse()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 
 	// Attempt to fetch srcDir and dstDir through Donna arguments,
 	// and if not possible attempt to fetch from OS environment
@@ -40,7 +45,8 @@ func Cmd() {
 		}
 	}
 	if srcDir == "" {
-		logger.Fatal("Pass srcDir as argument or through $%s.", srcDirEnvKey)
+		fmt.Printf("Pass srcDir as argument or through $%s.", srcDirEnvKey)
+		os.Exit(1)
 	}
 
 	dstDir, ok := donna.NextArg()
@@ -51,7 +57,8 @@ func Cmd() {
 		}
 	}
 	if dstDir == "" {
-		logger.Fatal("Pass dstDir as argument or through $%s.", dstDirEnvKey)
+		fmt.Printf("Pass dstDir as argument or through $%s.", dstDirEnvKey)
+		os.Exit(1)
 	}
 
 	// Load settings

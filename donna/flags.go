@@ -7,12 +7,12 @@ package donna
 
 var (
 	globalFlags []string
-	flags       []string
+	localFlags  []string
 )
 
 func init() {
 	globalFlags = make([]string, 0)
-	flags = make([]string, 0)
+	localFlags = make([]string, 0)
 }
 
 func HasGlobalFlag(name string) bool {
@@ -25,7 +25,7 @@ func HasGlobalFlag(name string) bool {
 }
 
 func HasFlag(name string) bool {
-	for _, flag := range flags {
+	for _, flag := range localFlags {
 		if flag == name {
 			return true
 		}

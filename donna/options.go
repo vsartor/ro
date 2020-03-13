@@ -7,12 +7,12 @@ package donna
 
 var (
 	globalOptions map[string]string
-	options map[string]string
+	localOptions  map[string]string
 )
 
 func init() {
 	globalOptions = make(map[string]string)
-	options = make(map[string]string)
+	localOptions = make(map[string]string)
 }
 
 func GetGlobalOption(name string) (string, bool) {
@@ -21,6 +21,6 @@ func GetGlobalOption(name string) (string, bool) {
 }
 
 func GetOption(name string) (string, bool) {
-	value, exists := options[name]
+	value, exists := localOptions[name]
 	return value, exists
 }

@@ -6,8 +6,10 @@
 package gcp
 
 import (
+	"fmt"
 	"github.com/vsartor/ro/donna"
 	"github.com/vsartor/ro/weems"
+	"os"
 )
 
 var logger weems.Logger
@@ -20,7 +22,8 @@ func Cmd() {
 	initGcp()
 	command, ok := donna.NextArg()
 	if !ok {
-		logger.Fatal("Expected a command.")
+		fmt.Printf("Expected a GCP command.\n")
+		os.Exit(1)
 	}
 
 	switch command {
@@ -29,6 +32,7 @@ func Cmd() {
 	case "upload":
 		uploadCmd()
 	default:
-		logger.Fatal("Unexpected argument: %s", command)
+		fmt.Printf("Unexpected GCP command '%s'.\n", command)
+		os.Exit(1)
 	}
 }

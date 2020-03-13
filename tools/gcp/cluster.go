@@ -14,6 +14,7 @@ import (
 	"google.golang.org/api/option"
 	dataprocpb "google.golang.org/genproto/googleapis/cloud/dataproc/v1beta2"
 	"math"
+	"os"
 	"strconv"
 )
 
@@ -165,27 +166,40 @@ func clusterCmd() {
 	donna.ExpectOption("c")
 	donna.ExpectOption("w")
 	donna.ExpectFlag("highmem")
-	donna.Parse()
+	err := donna.Parse()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 
+	// TODO: Infer this from credentials
 	projectName, ok := donna.GetOption("project")
 	if !ok {
-		logger.Fatal("Did not receive a project name.")
+		fmt.Println("Did not receive project name.")
+		os.Exit(1)
 	}
 	bucketName, ok := donna.GetOption("bucket")
 	if !ok {
-		logger.Fatal("Did not receive a bucket name.")
+		fmt.Println("Did not receive bucket name.")
+		os.Exit(1)
 	}
+	// TODO: Fetch this from Rich
 	credential, ok := donna.GetOption("cred")
 	if !ok {
-		logger.Fatal("Did not receive path to credential file.")
+		fmt.Println("Did not receive credential file path.")
+		os.Exit(1)
 	}
+	// TODO: Specify integer option
 	cores, ok := donna.GetOption("c")
 	if !ok {
-		logger.Fatal("Did not receive number of cores.")
+		fmt.Println("Did not receive number of cores.")
+		os.Exit(1)
 	}
+	// TODO: Specify integer option
 	workers, ok := donna.GetOption("w")
 	if !ok {
-		logger.Fatal("Did not receive number of workers.")
+		fmt.Println("Did not receive number of workers.")
+		os.Exit(1)
 	}
 	highMemory := donna.HasFlag("highmem")
 
@@ -194,6 +208,7 @@ func clusterCmd() {
 		clusterName = "ro-cluster"
 	}
 
+	// TODO: Integer validation should be Donna's responsibility
 	// Convert integer options
 	numWorkers, err := strconv.Atoi(workers)
 	if err != nil {

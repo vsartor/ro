@@ -140,4 +140,3 @@ func IsFile(path string) bool {
 
 	return !stat.IsDir()
 }
-

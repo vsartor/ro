@@ -6,103 +6,105 @@
 package donna
 
 import (
-	"os"
+	"errors"
+	"fmt"
 	"strings"
 )
 
-var localParametersIdx int
+var iterator paramIterator
 
-func parseGlobalArg(arg string, idx *int) {
-	argName := strings.TrimPrefix(arg, "--")
+// Parses a single cli parameter
+func parseCliParam(iterator paramIterator, global bool) error {
+	// Get current parameter and trim dashes
+	param := iterator.Curr()
+	paramName := strings.TrimPrefix(param, "--")
 
-	isExpected, isFlag := validate(argName)
-
+	// Check whether the argument is valid, and if so check whether
+	// it's a boolean flag.
+	isExpected, isFlag := validate(paramName, global)
 	if !isExpected {
-		logger.Fatal("Unexpected argument '%s'.", arg)
+		return errors.New(fmt.Sprintf(
+			"Unexpected flag '%s'.", param,
+		))
 	}
 
 	if isFlag {
-		globalFlags = append(globalFlags, argName)
-		*idx++
-		return
+		// Since parsing localFlags is simpler, handle this branch earlier.
+		if global {
+			globalFlags = append(globalFlags, paramName)
+		} else {
+			localFlags = append(localFlags, paramName)
+		}
+		return nil
 	}
 
 	// Assert that option received an associated value
-	if *idx == len(os.Args)-1 {
-		logger.Fatal("Global option '%s' has no associated value.", argName)
+	optionValue, ok := iterator.Next()
+	if !ok {
+		return errors.New(fmt.Sprintf(
+			"Option '%s' did not receive an associated value.", paramName,
+		))
 	}
 
-	optionValue := os.Args[*idx+1]
-	globalOptions[argName] = optionValue
-	*idx += 2
-}
+	// TODO: Validate option type
 
-func parseLocalArg(arg string, idx *int) {
-	argName := strings.TrimPrefix(arg, "--")
-
-	isExpected, isFlag := validate(argName)
-
-	if !isExpected {
-		logger.Fatal("Unexpected argument '%s'.", arg)
+	// Save option name and value
+	if global {
+		globalOptions[paramName] = optionValue
+	} else {
+		localOptions[paramName] = optionValue
 	}
 
-	if isFlag {
-		flags = append(flags, argName)
-		*idx++
-		return
-	}
-
-	// Assert that option received an associated value
-	if *idx == len(os.Args)-1 {
-		logger.Fatal("Option '%s' has no associated value.", argName)
-	}
-
-	optionValue := os.Args[*idx+1]
-	options[argName] = optionValue
-	*idx += 2
+	return nil
 }
 
 // Parse global command line arguments.
-func ParseGlobal() {
-	idx := 1
-	for idx < len(os.Args) {
-		arg := os.Args[idx]
+func ParseGlobal() error {
+	iterator.Reset()
 
-		if strings.HasPrefix(arg, "--") {
-			parseGlobalArg(arg, &idx)
+	// Parse global flags/options
+	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
+		if strings.HasPrefix(param, "--") {
+			err := parseCliParam(iterator, true)
+			if err != nil {
+				return err
+			}
 		} else {
-			// Found a regular Argument. This means the end of
-			// global parameters.
+			// Found regular Arg. Stop global parsing.
+			iterator.Rewind()
 			break
 		}
 	}
 
-	// Parse regular Arguments
-	for idx < len(os.Args) {
-		arg := os.Args[idx]
-
-		if strings.HasPrefix(arg, "-") {
-			// Found a flag/option; stop global parsing.
-			localParametersIdx = idx
+	// Load regular args
+	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
+		if strings.HasPrefix(param, "--") {
+			// Found a flag/option; stop global parsing
+			iterator.Rewind()
 			break
 		} else {
-			args.arguments = append(args.arguments, arg)
-			idx++
+			args.arguments = append(args.arguments, param)
 		}
 	}
+
+	return nil
 }
 
 // Parses local command line arguments.
-func Parse() {
-	idx := localParametersIdx
-	for idx < len(os.Args) {
-		arg := os.Args[idx]
-
-		if strings.HasPrefix(arg, "--") {
-			parseLocalArg(arg, &idx)
+func Parse() error {
+	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
+		if strings.HasPrefix(param, "--") {
+			err := parseCliParam(iterator, false)
+			if err != nil {
+				return err
+			}
 		} else {
 			// Should not have arguments at this point.
-			logger.Fatal("Unexpected argument '%s' after flags/options.", arg)
+			return errors.New(fmt.Sprintf(
+				"Unexpected argument '%s' after localFlags/localOptions.", param,
+			))
 		}
 	}
+
+	return nil
 }
