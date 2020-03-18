@@ -18,7 +18,7 @@ var iterator paramIterator
 func parseCliParam(global bool) error {
 	// Get current parameter and trim dashes.
 	param := iterator.Curr()
-	paramName := strings.TrimPrefix(param, "--")
+	paramName := strings.Trim(param, "-")
 
 	// Check whether the argument is valid, and if so check whether
 	// it's a boolean flag.
