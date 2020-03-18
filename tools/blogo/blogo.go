@@ -26,7 +26,7 @@ func Cmd() {
 	initBlogo()
 
 	// Register this commands flags/options and validate them
-	donna.ExpectFlag("local")
+	donna.ExpectFlag("l", "local")
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
