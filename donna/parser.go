@@ -136,9 +136,10 @@ func Parse() error {
 			}
 		} else {
 			// Should not have arguments at this point.
-			return errors.New(fmt.Sprintf(
-				"Unexpected argument '%s' after localFlags/localOptions.", param,
-			))
+			errorMsg := fmt.Sprintf(
+				"Unexpected argument '%s' after flags/options.", param,
+			)
+			return errors.New(errorMsg)
 		}
 	}
 
