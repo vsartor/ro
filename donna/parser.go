@@ -15,7 +15,7 @@ import (
 var iterator paramIterator
 
 // Parses a single cli parameter.
-func parseCliParam(iterator paramIterator, global bool) error {
+func parseCliParam(global bool) error {
 	// Get current parameter and trim dashes.
 	param := iterator.Curr()
 	paramName := strings.TrimPrefix(param, "--")
@@ -94,7 +94,7 @@ func ParseGlobal() error {
 	// Parse global flags/options.
 	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
 		if strings.HasPrefix(param, "--") {
-			err := parseCliParam(iterator, true)
+			err := parseCliParam(true)
 			if err != nil {
 				return err
 			}
@@ -130,7 +130,7 @@ func Parse() error {
 	// Parse command specific parameters
 	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
 		if strings.HasPrefix(param, "--") {
-			err := parseCliParam(iterator, false)
+			err := parseCliParam(false)
 			if err != nil {
 				return err
 			}
