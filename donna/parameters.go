@@ -29,8 +29,8 @@ type ParamInfo struct {
 	wasPassed bool      // Indicates whether parameter was passed.
 }
 
-func NewParamInfo(expectedParam ParamExpectInfo) ParamInfo {
-	return ParamInfo{
+func NewParamInfo(expectedParam ParamExpectInfo) *ParamInfo {
+	return &ParamInfo{
 		name:      expectedParam.name,
 		kind:      expectedParam.kind,
 		valueStr:  expectedParam.defaultStr,
@@ -55,18 +55,18 @@ func (paramInfo *ParamInfo) SetIntValue(value int) {
 }
 
 var (
-	globalParams map[string]ParamInfo
-	localParams  map[string]ParamInfo
+	globalParams map[string]*ParamInfo
+	localParams  map[string]*ParamInfo
 )
 
 func init() {
-	globalParams = make(map[string]ParamInfo)
-	localParams = make(map[string]ParamInfo)
+	globalParams = make(map[string]*ParamInfo)
+	localParams = make(map[string]*ParamInfo)
 }
 
 // Implements common functionality for checking the presence of
 // a flag for HasGlobalFlag and HasLocalFlag.
-func hasFlag(name string, params map[string]ParamInfo) (bool, error) {
+func hasFlag(name string, params map[string]*ParamInfo) (bool, error) {
 	info, ok := params[name]
 	if !ok {
 		errorMsg := fmt.Sprintf("Unknown parameter name '%s'.", name)
@@ -104,7 +104,7 @@ func HasFlag(name string) bool {
 }
 
 // Implements common functionality for obtaining a string option value.
-func getStrOption(name string, params map[string]ParamInfo) (string, bool, error) {
+func getStrOption(name string, params map[string]*ParamInfo) (string, bool, error) {
 	info, ok := params[name]
 	if !ok {
 		errorMsg := fmt.Sprintf("Unknown parameter name '%s'.", name)
@@ -142,7 +142,7 @@ func GetStrOption(name string) (string, bool) {
 }
 
 // Implements common functionality for obtaining an integer option value.
-func getIntOption(name string, params map[string]ParamInfo) (int, bool, error) {
+func getIntOption(name string, params map[string]*ParamInfo) (int, bool, error) {
 	info, ok := params[name]
 	if !ok {
 		errorMsg := fmt.Sprintf("Unknown parameter name '%s'.", name)

@@ -30,7 +30,7 @@ func parseCliParam(global bool) error {
 
 	if paramInfo.kind == ParamFlag {
 		// Since parsing a flag is simpler, handle this branch earlier.
-		var paramRef ParamInfo
+		var paramRef *ParamInfo
 		if global {
 			paramRef = globalParams[paramInfo.name]
 		} else {
@@ -58,7 +58,7 @@ func parseCliParam(global bool) error {
 			return errors.New(errorMsg)
 		}
 
-		var paramRef ParamInfo
+		var paramRef *ParamInfo
 		if global {
 			paramRef = globalParams[paramInfo.name]
 		} else {
@@ -70,7 +70,7 @@ func parseCliParam(global bool) error {
 	}
 
 	// String case, nothing to do but register the value.
-	var paramRef ParamInfo
+	var paramRef *ParamInfo
 	if global {
 		paramRef = globalParams[paramInfo.name]
 	} else {
