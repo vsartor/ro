@@ -100,28 +100,31 @@ Donna handles command line arguments.
 
 It separates command line arguments into two different types: parameters and regular arguments.
 
-_Parameters_ are arguments passed with the double dash preffix: these can either be _flags_, where their
-presence/absence indicates their value, or _options_, which have an associated value. _Args_ are regular
-names which indicate ro's execution path.
+_Parameters_ are arguments passed with dash prefix (commonly single or double): these can either be _flags_,
+where their presence/absence indicates their value, or _options_, which have an associated value. _Args_ are
+regular names which indicate ro's execution path.
 
 Options and flags can either be global, relating to Ro's own operations, or command specific. Global
-flags/options precede the arguments and command flags/options come after all arguments. To illustrate,
-this is Ro's invocation map.
+flags/options precede the _Args_ and command flags/options come after all _Args_. To illustrate,
+this is Ro's invocation map:
 
 ```
-ro [global parameters] <args> [command parameters]
+ro [global Parameters] <Args> [command Parameters]
 ```
 
-Flags and options are validated, meaning invalid flags/options will cause Donna to log a fatal message.
-Each tool must specify which options and flags they expect to receive through Donna's `func ExpectFlag(string)`
-and `func ExpectOption(string)` and, following this specification, the tool's entry point must call Donna's
-`func Parse()` for command parameter parsing and validation.
+Flags and options are validated, meaning invalid flags/options will cause Donna to return an error.
+Note that developer errors, such as attempting to fetch an unregistered flag, will result in a panic to
+facilitate debugging during development. Each tool must specify which options and flags they expect to
+receive through Donna's `func ExpectFlag(alias, name string)`, `func ExpectStrOption(alias, name, defaultValuestring)`
+and `func ExpectIntOption(alias, name string, defaultValue int)`. The tool's entry point must call Donna's
+`func Parse()` after setting out its expectations for command parameter parsing and validation.
 
-Presence of flags can be checked with Donna's `func HasFlag(string) bool` and options values can be checked with
-Donna's `func getOption(string) (string, bool)` where the second value indicates whether the option was passed and
-the first value is its associated value, if the option was given.
+Presence of flags can be checked with Donna's `func HasFlag(string) bool` and options values can be checked
+with Donna's `func GetStrOption(name string) (string, bool)` and `func GetIntOption(name string) (string, bool)`
+where the second value indicates whether the option was passed and the first value is its associated value,
+the one passed or the default one.
 
-Arguments are consumed as tokens, one by one, by invoking Donna's `func NextArg() (string, bool)`, where the second
+_Args_ are consumed as tokens, one by one, by invoking Donna's `func NextArg() (string, bool)`, where the second
 value indicates whether there are still arguments to be consumed, and the first value is the consumed argument in
 case it was available.
 
