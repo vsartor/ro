@@ -17,8 +17,8 @@ import (
 
 func uploadCmd() {
 	// Handle command line parameters
-	donna.ExpectOption("cred")
-	donna.ExpectOption("bucket")
+	donna.ExpectStrOption("b", "bucket", "")
+	donna.ExpectStrOption("r", "cred", "")
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -26,13 +26,13 @@ func uploadCmd() {
 	}
 
 	// TODO: Get this from Rich
-	credential, ok := donna.GetOption("cred")
-	if !ok {
+	credential, passed := donna.GetStrOption("cred")
+	if !passed {
 		fmt.Println("Did not receive credential file path.")
 		os.Exit(1)
 	}
-	bucket, ok := donna.GetOption("bucket")
-	if !ok {
+	bucket, passed := donna.GetStrOption("bucket")
+	if !passed {
 		fmt.Println("Did not receive bucket.")
 		os.Exit(1)
 	}
