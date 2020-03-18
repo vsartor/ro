@@ -93,7 +93,7 @@ func ParseGlobal() error {
 
 	// Parse global flags/options.
 	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
-		if strings.HasPrefix(param, "--") {
+		if strings.HasPrefix(param, "-") {
 			err := parseCliParam(true)
 			if err != nil {
 				return err
@@ -107,7 +107,7 @@ func ParseGlobal() error {
 
 	// Load regular args
 	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
-		if strings.HasPrefix(param, "--") {
+		if strings.HasPrefix(param, "-") {
 			// Found a flag/option; stop global parsing
 			iterator.Rewind()
 			break
@@ -129,7 +129,7 @@ func Parse() error {
 
 	// Parse command specific parameters
 	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
-		if strings.HasPrefix(param, "--") {
+		if strings.HasPrefix(param, "-") {
 			err := parseCliParam(false)
 			if err != nil {
 				return err
