@@ -73,15 +73,25 @@ func hasFlag(name string, params map[string]ParamInfo) (bool, error) {
 }
 
 // Returns whether the flag was passed as a global parameter.
-// Returns an error in case the parameter name was incorrect.
-func HasGlobalFlag(name string) (bool, error) {
-	return hasFlag(name, globalParams)
+// If parameter name is incorrect, this is assumed to be a developer
+// error and thus a panic is thrown to aid in a quick fix.
+func HasGlobalFlag(name string) bool {
+	returnVal, err := hasFlag(name, globalParams)
+	if err != nil {
+		panic(err.Error())
+	}
+	return returnVal
 }
 
 // Returns whether the flag was passed as a local parameter.
-// Returns an error in case the parameter name was incorrect.
-func HasFlag(name string) (bool, error) {
-	return hasFlag(name, localParams)
+// If parameter name is incorrect, this is assumed to be a developer
+// error and thus a panic is thrown to aid in a quick fix.
+func HasFlag(name string) bool {
+	returnVal, err := hasFlag(name, localParams)
+	if err != nil {
+		panic(err.Error())
+	}
+	return returnVal
 }
 
 // Implements common functionality for obtaining a string option value.

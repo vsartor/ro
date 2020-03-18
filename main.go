@@ -22,9 +22,9 @@ func init() {
 
 func main() {
 	// Add expected values
-	donna.ExpectGlobalFlag("trace")
-	donna.ExpectGlobalFlag("verbose")
-	donna.ExpectGlobalFlag("quiet")
+	donna.ExpectGlobalFlag("t", "trace")
+	donna.ExpectGlobalFlag("v", "verbose")
+	donna.ExpectGlobalFlag("q", "quiet")
 
 	// Parse and validate global values
 	err := donna.ParseGlobal()
