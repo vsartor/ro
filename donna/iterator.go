@@ -27,7 +27,7 @@ func (pi *paramIterator) Curr() string {
 // Returns the next parameter, and a flag indicating if there was
 // an argument to return.
 func (pi *paramIterator) Next() (string, bool) {
-	if pi.currIdx + 1 == len(os.Args) {
+	if pi.currIdx+1 == len(os.Args) {
 		return "", false
 	}
 	pi.currIdx++

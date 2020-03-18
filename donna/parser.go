@@ -8,51 +8,64 @@ package donna
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 )
 
 var iterator paramIterator
 
-// Parses a single cli parameter
+// Parses a single cli parameter.
 func parseCliParam(iterator paramIterator, global bool) error {
-	// Get current parameter and trim dashes
+	// Get current parameter and trim dashes.
 	param := iterator.Curr()
 	paramName := strings.TrimPrefix(param, "--")
 
 	// Check whether the argument is valid, and if so check whether
 	// it's a boolean flag.
-	isExpected, isFlag := validate(paramName, global)
+	paramInfo, isExpected := expectedInfo(paramName, global)
 	if !isExpected {
-		return errors.New(fmt.Sprintf(
-			"Unexpected flag '%s'.", param,
-		))
+		errorMsg := fmt.Sprintf("Unexpected flag '%s'.", param)
+		return errors.New(errorMsg)
 	}
 
-	if isFlag {
-		// Since parsing localFlags is simpler, handle this branch earlier.
+	if paramInfo.kind == ParamFlag {
+		// Since parsing a flag is simpler, handle this branch earlier.
 		if global {
-			globalFlags = append(globalFlags, paramName)
+			globalParams[paramInfo.name].ToggleFlag()
 		} else {
-			localFlags = append(localFlags, paramName)
+			localParams[paramInfo.name].ToggleFlag()
 		}
-		return nil
 	}
 
-	// Assert that option received an associated value
-	optionValue, ok := iterator.Next()
+	// Assert that option received an associated value.
+	optionVal, ok := iterator.Next()
 	if !ok {
-		return errors.New(fmt.Sprintf(
-			"Option '%s' did not receive an associated value.", paramName,
-		))
+		errorMsg := fmt.Sprintf("Option '%s' did not receive an associated value.", paramInfo.name)
+		return errors.New(errorMsg)
 	}
 
-	// TODO: Validate option type
+	if paramInfo.kind == ParamInt {
+		// Validate the parsedVal type
+		parsedVal, err := strconv.Atoi(optionVal)
+		if err != nil {
+			errorMsg := fmt.Sprintf(
+				"Option '%s' did not receive a valid integer parsedVal.", paramInfo.name,
+			)
+			return errors.New(errorMsg)
+		}
 
-	// Save option name and value
+		if global {
+			globalParams[paramInfo.name].SetIntValue(parsedVal)
+		} else {
+			localParams[paramInfo.name].SetIntValue(parsedVal)
+		}
+	}
+
+	// String case, nothing to do but register the value.
 	if global {
-		globalOptions[paramName] = optionValue
+		globalParams[paramInfo.name].SetStrValue(optionVal)
 	} else {
-		localOptions[paramName] = optionValue
+		localParams[paramInfo.name].SetStrValue(optionVal)
 	}
 
 	return nil
@@ -62,7 +75,13 @@ func parseCliParam(iterator paramIterator, global bool) error {
 func ParseGlobal() error {
 	iterator.Reset()
 
-	// Parse global flags/options
+	// Initialize Parameter information with default values based
+	// on expected parameter information.
+	for _, expectedParam := range expectedGlobalParams {
+		globalParams[expectedParam.name] = NewParamInfo(expectedParam)
+	}
+
+	// Parse global flags/options.
 	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
 		if strings.HasPrefix(param, "--") {
 			err := parseCliParam(iterator, true)
@@ -92,6 +111,13 @@ func ParseGlobal() error {
 
 // Parses local command line arguments.
 func Parse() error {
+	// Initialize Parameter information with default values based
+	// on expected parameter information.
+	for _, expectedParam := range expectedLocalParams {
+		localParams[expectedParam.name] = NewParamInfo(expectedParam)
+	}
+
+	// Parse command specific parameters
 	for param, ok := iterator.Next(); ok; param, ok = iterator.Next() {
 		if strings.HasPrefix(param, "--") {
 			err := parseCliParam(iterator, false)
