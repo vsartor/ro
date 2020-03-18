@@ -21,6 +21,7 @@ type ParamInfo struct {
 	valueStr  string    // Parameter value, passed or default.
 	valueInt  int
 	valueBool bool
+	wasPassed bool      // Indicates whether parameter was passed.
 }
 
 func NewParamInfo(expectedParam ParamExpectInfo) ParamInfo {
@@ -30,6 +31,7 @@ func NewParamInfo(expectedParam ParamExpectInfo) ParamInfo {
 		valueStr:  expectedParam.defaultStr,
 		valueInt:  expectedParam.defaultInt,
 		valueBool: false,
+		wasPassed: false,
 	}
 }
 
@@ -39,10 +41,12 @@ func (paramInfo *ParamInfo) ToggleFlag() {
 
 func (paramInfo *ParamInfo) SetStrValue(value string) {
 	paramInfo.valueStr = value
+	paramInfo.wasPassed = true
 }
 
 func (paramInfo *ParamInfo) SetIntValue(value int) {
 	paramInfo.valueInt = value
+	paramInfo.wasPassed = true
 }
 
 var (
@@ -95,57 +99,77 @@ func HasFlag(name string) bool {
 }
 
 // Implements common functionality for obtaining a string option value.
-func getStrOption(name string, params map[string]ParamInfo) (string, error) {
+func getStrOption(name string, params map[string]ParamInfo) (string, bool, error) {
 	info, ok := params[name]
 	if !ok {
 		errorMsg := fmt.Sprintf("Unknown parameter name '%s'.", name)
-		return "", errors.New(errorMsg)
+		return "", false, errors.New(errorMsg)
 	}
 
 	if info.kind != ParamStr {
 		errorMsg := fmt.Sprintf("Parameter '%s' is not a string option.", name)
-		return "", errors.New(errorMsg)
+		return "", false, errors.New(errorMsg)
 	}
 
-	return info.valueStr, nil
+	return info.valueStr, info.wasPassed, nil
 }
 
-// Returns the global string option's value.
-// Returns an error in case the parameter name was incorrect.
-func GetGlobalStrOption(name string) (string, error) {
-	return getStrOption(name, globalParams)
+// Returns the global string option's value and whether value was passed.
+// If parameter name is incorrect, this is assumed to be a developer
+// error and thus a panic is thrown to aid in a quick fix.
+func GetGlobalStrOption(name string) (string, bool) {
+	returnVal, ok, err := getStrOption(name, globalParams)
+	if err != nil {
+		panic(err.Error())
+	}
+	return returnVal, ok
 }
 
-// Returns the local string option's value.
-// Returns an error in case the parameter name was incorrect.
-func GetStrOption(name string) (string, error) {
-	return getStrOption(name, localParams)
+// Returns the local string option's value and whether value was passed.
+// If parameter name is incorrect, this is assumed to be a developer
+// error and thus a panic is thrown to aid in a quick fix.
+func GetStrOption(name string) (string, bool) {
+	returnVal, ok, err := getStrOption(name, localParams)
+	if err != nil {
+		panic(err.Error())
+	}
+	return returnVal, ok
 }
 
 // Implements common functionality for obtaining an integer option value.
-func getIntOption(name string, params map[string]ParamInfo) (int, error) {
+func getIntOption(name string, params map[string]ParamInfo) (int, bool, error) {
 	info, ok := params[name]
 	if !ok {
 		errorMsg := fmt.Sprintf("Unknown parameter name '%s'.", name)
-		return 0, errors.New(errorMsg)
+		return 0, false, errors.New(errorMsg)
 	}
 
 	if info.kind != ParamInt {
 		errorMsg := fmt.Sprintf("Parameter '%s' is not an integer option.", name)
-		return 0, errors.New(errorMsg)
+		return 0, false, errors.New(errorMsg)
 	}
 
-	return info.valueInt, nil
+	return info.valueInt, info.wasPassed, nil
 }
 
-// Returns the global integer option's value.
-// Returns an error in case the parameter name was incorrect.
-func GetGlobalIntOption(name string) (int, error) {
-	return getIntOption(name, globalParams)
+// Returns the global integer option's value and whether value was passed.
+// If parameter name is incorrect, this is assumed to be a developer
+// error and thus a panic is thrown to aid in a quick fix.
+func GetGlobalIntOption(name string) (int, bool) {
+	value, ok, err := getIntOption(name, globalParams)
+	if err != nil {
+		panic(err.Error())
+	}
+	return value, ok
 }
 
-// Returns the local string option's value.
-// Returns an error in case the parameter name was incorrect.
-func GetIntOption(name string) (int, error) {
-	return getIntOption(name, localParams)
+// Returns the local string option's value and whether value was passed.
+// If parameter name is incorrect, this is assumed to be a developer
+// error and thus a panic is thrown to aid in a quick fix.
+func GetIntOption(name string) (int, bool) {
+	value, ok, err := getIntOption(name, localParams)
+	if err != nil {
+		panic(err.Error())
+	}
+	return value, ok
 }

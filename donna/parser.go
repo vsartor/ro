@@ -37,6 +37,8 @@ func parseCliParam(iterator paramIterator, global bool) error {
 			paramRef = localParams[paramInfo.name]
 		}
 		paramRef.ToggleFlag()
+
+		return nil
 	}
 
 	// Assert that option received an associated value.
@@ -63,6 +65,8 @@ func parseCliParam(iterator paramIterator, global bool) error {
 			paramRef = localParams[paramInfo.name]
 		}
 		paramRef.SetIntValue(parsedVal)
+
+		return nil
 	}
 
 	// String case, nothing to do but register the value.

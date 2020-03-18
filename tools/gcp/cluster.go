@@ -15,7 +15,6 @@ import (
 	dataprocpb "google.golang.org/genproto/googleapis/cloud/dataproc/v1beta2"
 	"math"
 	"os"
-	"strconv"
 )
 
 const (
@@ -158,14 +157,13 @@ func getClusterCreationRequest(
 
 func clusterCmd() {
 	// Handle command line arguments
-
-	donna.ExpectOption("project")
-	donna.ExpectOption("bucket")
-	donna.ExpectOption("cred")
-	donna.ExpectOption("name")
-	donna.ExpectOption("c")
-	donna.ExpectOption("w")
-	donna.ExpectFlag("highmem")
+	donna.ExpectStrOption("p", "project", "")
+	donna.ExpectStrOption("b", "bucket", "")
+	donna.ExpectStrOption("r", "cred", "")
+	donna.ExpectStrOption("n", "name", "")
+	donna.ExpectIntOption("c", "cores", 0)
+	donna.ExpectIntOption("w", "numWorkers", 0)
+	donna.ExpectFlag("m", "highmem")
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -173,50 +171,42 @@ func clusterCmd() {
 	}
 
 	// TODO: Infer this from credentials
-	projectName, ok := donna.GetOption("project")
-	if !ok {
+	projectName, passed := donna.GetStrOption("project")
+	if !passed {
 		fmt.Println("Did not receive project name.")
 		os.Exit(1)
 	}
-	bucketName, ok := donna.GetOption("bucket")
-	if !ok {
+
+	bucketName, passed := donna.GetStrOption("bucket")
+	if !passed {
 		fmt.Println("Did not receive bucket name.")
 		os.Exit(1)
 	}
+
 	// TODO: Fetch this from Rich
-	credential, ok := donna.GetOption("cred")
-	if !ok {
+	credential, passed := donna.GetStrOption("cred")
+	if !passed {
 		fmt.Println("Did not receive credential file path.")
 		os.Exit(1)
 	}
+
 	// TODO: Specify integer option
-	cores, ok := donna.GetOption("c")
-	if !ok {
+	numCores, passed := donna.GetIntOption("cores")
+	if !passed {
 		fmt.Println("Did not receive number of cores.")
 		os.Exit(1)
 	}
-	// TODO: Specify integer option
-	workers, ok := donna.GetOption("w")
-	if !ok {
-		fmt.Println("Did not receive number of workers.")
+
+	numWorkers, passed := donna.GetIntOption("numWorkers")
+	if !passed {
+		fmt.Println("Did not receive number of numWorkers.")
 		os.Exit(1)
 	}
 	highMemory := donna.HasFlag("highmem")
 
-	clusterName, ok := donna.GetOption("name")
-	if !ok {
+	clusterName, passed := donna.GetStrOption("name")
+	if !passed {
 		clusterName = "ro-cluster"
-	}
-
-	// TODO: Integer validation should be Donna's responsibility
-	// Convert integer options
-	numWorkers, err := strconv.Atoi(workers)
-	if err != nil {
-		logger.Fatal("'%s' is not a valid number of workers.", workers)
-	}
-	numCores, err := strconv.Atoi(cores)
-	if err != nil {
-		logger.Fatal("'%s' is not a valid number of cores.", cores)
 	}
 
 	// Create the cluster
