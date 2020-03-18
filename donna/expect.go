@@ -45,7 +45,7 @@ func expectFlag(alias, name string, where *[]ParamExpectInfo) {
 			alias:      alias,
 			name:       name,
 			kind:       ParamFlag,
-			defaultStr: 0,
+			defaultStr: "",
 			defaultInt: 0,
 		},
 	)

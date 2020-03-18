@@ -30,11 +30,13 @@ func parseCliParam(iterator paramIterator, global bool) error {
 
 	if paramInfo.kind == ParamFlag {
 		// Since parsing a flag is simpler, handle this branch earlier.
+		var paramRef ParamInfo
 		if global {
-			globalParams[paramInfo.name].ToggleFlag()
+			paramRef = globalParams[paramInfo.name]
 		} else {
-			localParams[paramInfo.name].ToggleFlag()
+			paramRef = localParams[paramInfo.name]
 		}
+		paramRef.ToggleFlag()
 	}
 
 	// Assert that option received an associated value.
@@ -54,19 +56,23 @@ func parseCliParam(iterator paramIterator, global bool) error {
 			return errors.New(errorMsg)
 		}
 
+		var paramRef ParamInfo
 		if global {
-			globalParams[paramInfo.name].SetIntValue(parsedVal)
+			paramRef = globalParams[paramInfo.name]
 		} else {
-			localParams[paramInfo.name].SetIntValue(parsedVal)
+			paramRef = localParams[paramInfo.name]
 		}
+		paramRef.SetIntValue(parsedVal)
 	}
 
 	// String case, nothing to do but register the value.
+	var paramRef ParamInfo
 	if global {
-		globalParams[paramInfo.name].SetStrValue(optionVal)
+		paramRef = globalParams[paramInfo.name]
 	} else {
-		localParams[paramInfo.name].SetStrValue(optionVal)
+		paramRef = localParams[paramInfo.name]
 	}
+	paramRef.SetStrValue(optionVal)
 
 	return nil
 }
