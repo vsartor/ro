@@ -162,3 +162,7 @@ file system operations. Some operations however, such as reading a file as a sli
 copying one directory into a new path, are not implemented by default.
 
 Linus exposes these quality of life file system functionalities.
+
+### Nemec
+
+Nemec abstracts away managing and creating files internal to Ro. 
