@@ -24,12 +24,12 @@ ro gcp cluster [-name <clusterName>] -project <projetId> -bucket <bucketName> -c
 ```
 
 The parameters have the following effects:
-* `name`: The name of the cluster. Defaults to "ro-cluster" if not given.
-* `bucket`: The name of the bucket for cluster setup and Jupyter notebook files.
-* `cred`: Path to the JSON credentials file.
-* `w`: The number of workers.
-* `c`: The number of cores per worker.
-* `highMem`: Flag indicating if cores should have higher memory than default.
+* `n`, `name`: The name of the cluster. Defaults to "ro-cluster" if not given.
+* `b`, `bucket`: The name of the bucket for cluster setup and Jupyter notebook files.
+* `r`, `cred`: Path to the JSON credentials file.
+* `w`, `workers`: The number of workers.
+* `c`, `cores`: The number of cores per worker.
+* `h`, `highMem`: Flag indicating if cores should have higher memory than default.
 
 This command attempts to compute appropriate master node configuration depending on the number of workers, and also
 provides better default settings for spark configurations than Dataproc's. It also enables HTTP port access and
