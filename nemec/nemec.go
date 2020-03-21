@@ -43,13 +43,13 @@ func CompletePath(path string) string {
 
 // Opens a file, creating it if it doesn't exist.
 // The path is relative to Ro's internal folder.
-func File(path string) (*os.File, error) {
+func File(path, emptyValue string, flag int) (*os.File, error) {
 	// Get complete path
 	path = CompletePath(path)
 
 	if !linus.Exists(path) {
 		// Create directory where the file should be located
-		dirPath := filepath.Base(path)
+		dirPath := filepath.Dir(path)
 		err := os.MkdirAll(dirPath, 0755)
 		if err != nil {
 			return nil, err
@@ -60,7 +60,7 @@ func File(path string) (*os.File, error) {
 		if err != nil {
 			return nil, err
 		}
-		_, err = file.Write([]byte{'\n'})
+		_, err = file.WriteString(emptyValue)
 		if err != nil {
 			return nil, err
 		}
@@ -71,7 +71,7 @@ func File(path string) (*os.File, error) {
 		return nil, errors.New(errMsg)
 	}
 
-	return os.Open(path)
+	return os.OpenFile(path, flag, 0644)
 }
 
 // Lists elements of a directory, creating it if it doesn't exist.
