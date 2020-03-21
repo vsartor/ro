@@ -60,6 +60,10 @@ func File(path string) (*os.File, error) {
 		if err != nil {
 			return nil, err
 		}
+		_, err = file.Write([]byte{'\n'})
+		if err != nil {
+			return nil, err
+		}
 		file.Close()
 	} else if linus.IsDir(path) {
 		// If it exists but is a directory, give out an error
