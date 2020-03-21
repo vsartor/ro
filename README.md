@@ -155,6 +155,17 @@ same `io.Writer`.
 The default `io.Writer` and logging levels for Loggers which have their default values can be changed at runtime
 through the `func SetGlobalLevel(int)` and the `func SetGlobalWriter(io.Writer)` functions.
 
+### Bran
+
+Bran remembers things for Ro.
+
+Any given source file can have a permanent cache with value accessed by `bran.Get(key string) string` and
+`bran.Set(key, value string)`.Runtime information is used to determine the caller of the `Get` and `Set`
+functions, meaning keys are kept in a namespace for each source file.
+
+The permanent memory is implemented by requesting [Nemec](https://github.com/vsartor/ro#nemec) to save a JSON
+for each namespace within a folder named `cache`. A simple hash is used instead of the actual path of caller.
+
 ### Linus
 
 Go's standard library includes various functions spread across multiple files that enables one to perform various
