@@ -183,12 +183,7 @@ func clusterCmd() {
 		os.Exit(1)
 	}
 
-	// TODO: Fetch this from Rich
-	credential, passed := donna.GetStrOption("cred")
-	if !passed {
-		fmt.Println("Did not receive credential file path.")
-		os.Exit(1)
-	}
+	credential := getCredential(bucketName)
 
 	// TODO: Specify integer option
 	numCores, passed := donna.GetIntOption("cores")

@@ -25,17 +25,12 @@ func uploadCmd() {
 		os.Exit(1)
 	}
 
-	// TODO: Get this from Rich
-	credential, passed := donna.GetStrOption("cred")
-	if !passed {
-		fmt.Println("Did not receive credential file path.")
-		os.Exit(1)
-	}
 	bucket, passed := donna.GetStrOption("bucket")
 	if !passed {
 		fmt.Println("Did not receive bucket.")
 		os.Exit(1)
 	}
+	credential := getCredential(bucket)
 
 	srcPath, ok := donna.NextArg()
 	if !ok {
