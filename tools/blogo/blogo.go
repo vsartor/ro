@@ -41,7 +41,7 @@ func Cmd() {
 	if !ok {
 		srcDir = os.Getenv(srcDirEnvKey)
 		if srcDir != "" {
-			logger.Info("Fetched srcDir from environment as '%s'.", srcDir)
+			logger.Info("Fetched srcDir from environment as %q.", srcDir)
 		}
 	}
 	if srcDir == "" {
@@ -53,7 +53,7 @@ func Cmd() {
 	if !ok {
 		dstDir = os.Getenv(dstDirEnvKey)
 		if dstDir != "" {
-			logger.Info("Fetched dstDir from environment as '%s'.", dstDir)
+			logger.Info("Fetched dstDir from environment as %q.", dstDir)
 		}
 	}
 	if dstDir == "" {

@@ -69,12 +69,12 @@ func init() {
 func hasFlag(name string, params map[string]*ParamInfo) (bool, error) {
 	info, ok := params[name]
 	if !ok {
-		errorMsg := fmt.Sprintf("Unknown parameter name '%s'.", name)
+		errorMsg := fmt.Sprintf("Unknown parameter name %q.", name)
 		return false, errors.New(errorMsg)
 	}
 
 	if info.kind != ParamFlag {
-		errorMsg := fmt.Sprintf("Parameter '%s' is not a flag.", name)
+		errorMsg := fmt.Sprintf("Parameter %q is not a flag.", name)
 		return false, errors.New(errorMsg)
 	}
 
@@ -107,12 +107,12 @@ func HasFlag(name string) bool {
 func getStrOption(name string, params map[string]*ParamInfo) (string, bool, error) {
 	info, ok := params[name]
 	if !ok {
-		errorMsg := fmt.Sprintf("Unknown parameter name '%s'.", name)
+		errorMsg := fmt.Sprintf("Unknown parameter name %q.", name)
 		return "", false, errors.New(errorMsg)
 	}
 
 	if info.kind != ParamStr {
-		errorMsg := fmt.Sprintf("Parameter '%s' is not a string option.", name)
+		errorMsg := fmt.Sprintf("Parameter %q is not a string option.", name)
 		return "", false, errors.New(errorMsg)
 	}
 
@@ -145,12 +145,12 @@ func GetStrOption(name string) (string, bool) {
 func getIntOption(name string, params map[string]*ParamInfo) (int, bool, error) {
 	info, ok := params[name]
 	if !ok {
-		errorMsg := fmt.Sprintf("Unknown parameter name '%s'.", name)
+		errorMsg := fmt.Sprintf("Unknown parameter name %q.", name)
 		return 0, false, errors.New(errorMsg)
 	}
 
 	if info.kind != ParamInt {
-		errorMsg := fmt.Sprintf("Parameter '%s' is not an integer option.", name)
+		errorMsg := fmt.Sprintf("Parameter %q is not an integer option.", name)
 		return 0, false, errors.New(errorMsg)
 	}
 

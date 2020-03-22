@@ -32,18 +32,18 @@ func loadSettings(sourceDir, targetDir string) {
 	configPath := filepath.Join(sourceDir, configFileName)
 	fileContent, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		logger.Fatal("Could not open configuration file '%s': %s", configPath, err)
+		logger.Fatal("Could not open configuration file %q: %s", configPath, err)
 	}
 
 	err = json.Unmarshal(fileContent, &settings)
 	if err != nil {
-		logger.Fatal("Could not parse configuration in '%s': %s", configPath, err)
+		logger.Fatal("Could not parse configuration in %q: %s", configPath, err)
 	}
 	settings.SrcPath = sourceDir
 	settings.DstPath = targetDir
 }
 
 func redirectUrl(newUrl string) {
-	logger.Warn("Redirecting build URL to '%s'.", newUrl)
+	logger.Warn("Redirecting build URL to %q.", newUrl)
 	settings.BaseUrl = newUrl
 }

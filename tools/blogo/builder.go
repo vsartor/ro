@@ -138,7 +138,7 @@ func buildHome(posts []postInfo, resources commonResources) {
 			continue
 		}
 
-		logger.Info("Adding preview of '%s' to home.", post.title)
+		logger.Info("Adding preview of %q to home.", post.title)
 		previewCount++
 		postContent.Append(post.ToHtml(true))
 
@@ -162,7 +162,7 @@ func postFileName(post postInfo) string {
 }
 
 func buildPost(post postInfo, isStatic bool, resources commonResources) error {
-	logger.Info("Generating page for '%s'.", post.title)
+	logger.Info("Generating page for %q.", post.title)
 
 	postPage, err := pages.NewPage(templatePath("post"))
 	if err != nil {
@@ -208,7 +208,7 @@ func buildPosts(posts []postInfo, statics bool, resources commonResources) {
 	for _, post := range posts {
 		err := buildPost(post, statics, resources)
 		if err != nil {
-			logger.Error("Skipping '%s' due to: %s", post.title, err)
+			logger.Error("Skipping %q due to: %s", post.title, err)
 		}
 	}
 }
@@ -226,7 +226,7 @@ func buildPostsPage(posts []postInfo, resources commonResources) {
 	// Add post previews by most recent
 	postContent := pages.Page{}
 	for _, post := range posts {
-		logger.Info("Adding preview of '%s' to posts index.", post.title)
+		logger.Info("Adding preview of %q to posts index.", post.title)
 		postContent.Append(post.ToHtml(true))
 	}
 	postsIndex.Replace("post_index", postContent.ToString())

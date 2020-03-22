@@ -60,7 +60,7 @@ func main() {
 		logger.Trace("Dispatching to gcp.")
 		gcp.Cmd()
 	default:
-		fmt.Printf("Unexpected command '%s'.\n", method)
+		fmt.Printf("Unexpected command %q.\n", method)
 		os.Exit(1)
 	}
 }

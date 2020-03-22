@@ -22,7 +22,7 @@ func uploadFile(
 	ctx context.Context,
 	client *storage.Client,
 ) error {
-	logger.Info("Uploading '%s' to '%s:%s'.", srcPath, bucketName, bucketPath)
+	logger.Info("Uploading %q to \"%s:%s\".", srcPath, bucketName, bucketPath)
 
 	src, err := os.Open(srcPath)
 	if err != nil {
@@ -45,7 +45,7 @@ func uploadFile(
 }
 
 func uploadDir(srcPath, bucketName, bucketPath string, ctx context.Context, client *storage.Client) error {
-	logger.Info("Uploading directory '%s' to '%s:%s'.", srcPath, bucketName, bucketPath)
+	logger.Info("Uploading directory %q to \"%s:%s\".", srcPath, bucketName, bucketPath)
 
 	err := filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
 		// Ignore directories

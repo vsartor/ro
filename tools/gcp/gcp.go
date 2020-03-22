@@ -32,7 +32,7 @@ func Cmd() {
 	case "upload":
 		uploadCmd()
 	default:
-		fmt.Printf("Unexpected GCP command '%s'.\n", command)
+		fmt.Printf("Unexpected GCP command %q.\n", command)
 		os.Exit(1)
 	}
 }

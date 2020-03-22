@@ -24,7 +24,7 @@ func parseCliParam(global bool) error {
 	// it's a boolean flag.
 	paramInfo, isExpected := expectedInfo(paramName, global)
 	if !isExpected {
-		errorMsg := fmt.Sprintf("Unexpected flag '%s'.", param)
+		errorMsg := fmt.Sprintf("Unexpected flag %q.", param)
 		return errors.New(errorMsg)
 	}
 
@@ -44,7 +44,7 @@ func parseCliParam(global bool) error {
 	// Assert that option received an associated value.
 	optionVal, ok := iterator.Next()
 	if !ok {
-		errorMsg := fmt.Sprintf("Option '%s' did not receive an associated value.", paramInfo.name)
+		errorMsg := fmt.Sprintf("Option %q did not receive an associated value.", paramInfo.name)
 		return errors.New(errorMsg)
 	}
 
@@ -53,7 +53,7 @@ func parseCliParam(global bool) error {
 		parsedVal, err := strconv.Atoi(optionVal)
 		if err != nil {
 			errorMsg := fmt.Sprintf(
-				"Option '%s' did not receive a valid integer parsedVal.", paramInfo.name,
+				"Option %q did not receive a valid integer parsedVal.", paramInfo.name,
 			)
 			return errors.New(errorMsg)
 		}
@@ -137,7 +137,7 @@ func Parse() error {
 		} else {
 			// Should not have arguments at this point.
 			errorMsg := fmt.Sprintf(
-				"Unexpected argument '%s' after flags/options.", param,
+				"Unexpected argument %q after flags/options.", param,
 			)
 			return errors.New(errorMsg)
 		}
