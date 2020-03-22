@@ -21,6 +21,10 @@ type commonResources struct {
 	footer pages.Page
 }
 
+func templatePath(name string) string {
+	return filepath.Join(settings.SrcPath, "templates", name+".html")
+}
+
 func getCommonPage(name string) pages.Page {
 	page, err := pages.NewPage(templatePath(name))
 	if err != nil {
@@ -61,7 +65,8 @@ func getPostInfo(name string, isStatic bool, c chan postInfo) {
 func getPosts() []postInfo {
 	posts := make([]postInfo, 0)
 
-	postSrcs, err := ioutil.ReadDir(postsPath())
+	postsBasePath := filepath.Join(settings.SrcPath, "posts")
+	postSrcs, err := ioutil.ReadDir(postsBasePath)
 	if err != nil {
 		logger.Fatal("Could not list posts: %s", err)
 	}
