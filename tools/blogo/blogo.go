@@ -41,7 +41,7 @@ func Cmd() {
 	if !ok {
 		srcDir = os.Getenv(srcDirEnvKey)
 		if srcDir != "" {
-			fmt.Printf("Fetched source path from enviroment: %q.", srcDir)
+			fmt.Printf("Fetched source path from enviroment: %q.\n", srcDir)
 		}
 	}
 	if srcDir == "" {
@@ -53,7 +53,7 @@ func Cmd() {
 	if !ok {
 		dstDir = os.Getenv(dstDirEnvKey)
 		if dstDir != "" {
-			fmt.Printf("Fetched destination path from enviroment: %q.", dstDir)
+			fmt.Printf("Fetched destination path from enviroment: %q.\n", dstDir)
 		}
 	}
 	if dstDir == "" {
