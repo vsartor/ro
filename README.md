@@ -115,9 +115,15 @@ ro [global Parameters] <Args> [command Parameters]
 Flags and options are validated, meaning invalid flags/options will cause Donna to return an error.
 Note that developer errors, such as attempting to fetch an unregistered flag, will result in a panic to
 facilitate debugging during development. Each tool must specify which options and flags they expect to
-receive through Donna's `func ExpectFlag(alias, name string)`, `func ExpectStrOption(alias, name, defaultValuestring)`
-and `func ExpectIntOption(alias, name string, defaultValue int)`. The tool's entry point must call Donna's
+receive through Donna's `func ExpectFlag(alias, name, desc string)`, `func ExpectStrOption(alias, name, desc, defaultValuestring)`
+and `func ExpectIntOption(alias, name, desc string, defaultValue int)`. The tool's entry point must call Donna's
 `func Parse()` after setting out its expectations for command parameter parsing and validation.
+
+Besides, Donna also provides an automatic `--help` display, and stating expected arguments through
+`func ExpectArg(name, desc string)` can help building a more informative output. An example of the help
+command output is shown below for the `upload` command of the `gcp` tool.
+
+![](https://vsartor.com/images/gcp_help_example.png)
 
 Presence of flags can be checked with Donna's `func HasFlag(string) bool` and options values can be checked
 with Donna's `func GetStrOption(name string) (string, bool)` and `func GetIntOption(name string) (string, bool)`
