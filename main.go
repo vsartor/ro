@@ -14,7 +14,10 @@ import (
 	"os"
 )
 
-var logger weems.Logger
+var (
+	logger  weems.Logger
+	Version string
+)
 
 func init() {
 	logger = weems.NewLogger("ro")
@@ -66,5 +69,5 @@ func main() {
 }
 
 func cmdVersion() {
-	fmt.Printf("ro 1r61\n")
+	fmt.Printf("ro 1r%s\n", Version)
 }
