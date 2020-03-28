@@ -20,6 +20,11 @@ func parseCliParam(global bool) error {
 	param := iterator.Curr()
 	paramName := strings.Trim(param, "-")
 
+	// If this is a help invocation. Show help usage and exit.
+	if paramName == "help" {
+		DisplayCommandHelp()
+	}
+
 	// Check whether the argument is valid, and if so check whether
 	// it's a boolean flag.
 	paramInfo, isExpected := expectedInfo(paramName, global)
