@@ -5,4 +5,4 @@ install:
 	go install -ldflags "-X main.Version=$(VERSION)"
 
 tag:
-	git tag -a "\"1r$(VERSION)\"" -m "version $(VERSION)"
+	git tag -a "1r$(VERSION)" -m "version $(VERSION)"
