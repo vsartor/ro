@@ -44,10 +44,10 @@ func DisplayCommandHelp() {
 	// Show command usage
 	var usageString strings.Builder
 
-	usageString.WriteString("Usage: ")
+	usageString.WriteString("Usage:\n\t")
 	usageString.WriteString(iterator.Path())
 	for _, argInfo := range expectedArgs {
-		usageString.WriteString(fmt.Sprintf("<%s> ", argInfo.name))
+		usageString.WriteString(fmt.Sprintf("<\033[32m%s\033[0m> ", argInfo.name))
 	}
 	usageString.WriteString("[parameters]")
 
@@ -57,7 +57,7 @@ func DisplayCommandHelp() {
 	if len(expectedArgs) > 0 {
 		// Compute padding
 		padding := computePadding(expectedArgs)
-		padFmt := fmt.Sprintf("%%-%ds", padding)
+		padFmt := fmt.Sprintf("\033[32m%%-%ds\033[0m", padding)
 
 		// Display arguments
 		fmt.Printf("\nArguments:\n")

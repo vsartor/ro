@@ -66,5 +66,5 @@ func main() {
 }
 
 func cmdVersion() {
-	fmt.Printf("ro version %s\n", version)
+	fmt.Printf("ro 1r61\n")
 }
