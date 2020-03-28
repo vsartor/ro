@@ -29,7 +29,7 @@ type ParamInfo struct {
 	wasPassed bool // Indicates whether parameter was passed.
 }
 
-func NewParamInfo(expectedParam ParamExpectInfo) *ParamInfo {
+func NewParamInfo(expectedParam paramExpectInfo) *ParamInfo {
 	return &ParamInfo{
 		name:      expectedParam.name,
 		kind:      expectedParam.kind,

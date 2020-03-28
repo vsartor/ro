@@ -11,13 +11,28 @@ import (
 	"strings"
 )
 
+type NamedSlice interface {
+	Names() []string
+}
+
+func computePadding(namedObjects NamedSlice) int {
+	padding := 0
+	for _, name := range namedObjects.Names() {
+		nameLen := len(name)
+		if nameLen > padding {
+			padding = nameLen
+		}
+	}
+	return padding
+}
+
 func getKindStr(kind ParamKind) string {
 	if kind == ParamStr {
 		return "str"
 	} else if kind == ParamInt {
 		return "int"
 	} else if kind == ParamFlag {
-		return "flag"
+		return "nil"
 	}
 
 	// If we got here, there was a developer error.
@@ -29,29 +44,42 @@ func DisplayCommandHelp() {
 	// Show command usage
 	var usageString strings.Builder
 
-	usageString.WriteString("Usage: ...")
+	usageString.WriteString("Usage: ")
+	usageString.WriteString(iterator.Path())
 	for _, argInfo := range expectedArgs {
-		usageString.Write([]byte{' '})
 		usageString.WriteString(argInfo.name)
+		usageString.Write([]byte{' '})
 	}
-	usageString.WriteString(" [parameters]")
+	usageString.WriteString("[parameters]")
 
 	fmt.Println(usageString.String())
 
-	// Show argument descriptions
+	// Arguments section
 	if len(expectedArgs) > 0 {
+		// Compute padding
+		padding := computePadding(expectedArgs)
+		padFmt := fmt.Sprintf("%%-%ds", padding)
+
+		// Display arguments
 		fmt.Printf("\nArguments:\n")
 		for _, argInfo := range expectedArgs {
-			fmt.Printf("→ %s \033[94m[str]\033[0m: %s\n", argInfo.name, argInfo.desc)
+			paddedName := fmt.Sprintf(padFmt, argInfo.name)
+			fmt.Printf("\033[94m→\033[0m %s \033[94m[str]\033[0m: %s\n", paddedName, argInfo.desc)
 		}
 	}
 
-	// Show flag descriptions
+	// Parameters section
 	if len(expectedLocalParams) > 0 {
+		// Compute padding
+		padding := computePadding(expectedLocalParams)
+		padFmt := fmt.Sprintf("%%-%ds", padding)
+
+		// Display parameters
 		fmt.Printf("\nParameters:\n")
 		for _, paramInfo := range expectedLocalParams {
 			kind := getKindStr(paramInfo.kind)
-			fmt.Printf("→ %s \033[94m[%s]\033[0m: %s\n", paramInfo.name, kind, paramInfo.desc)
+			paddedName := fmt.Sprintf(padFmt, paramInfo.name)
+			fmt.Printf("\033[94m→\033[0m %s \033[94m[%s]\033[0m: %s\n", paddedName, kind, paramInfo.desc)
 		}
 	}
 

@@ -6,7 +6,7 @@
 package donna
 
 // Expected information about parameters held by the validator.
-type ParamExpectInfo struct {
+type paramExpectInfo struct {
 	alias      string    // Short alias for the command.
 	name       string    // Name of the parameter.
 	kind       ParamKind // Type of the parameter.
@@ -16,21 +16,44 @@ type ParamExpectInfo struct {
 }
 
 // Expected information about an argument.
-type expectedArgInfo struct {
+type argExpectInfo struct {
 	name string // Alias for referring to this argument.
 	desc string // Argument description.
 }
 
+type (
+	paramExpectSlice []paramExpectInfo
+	argExpectSlice   []argExpectInfo
+)
+
+// Satisfy NamedSlice interface for paramExpectSlice.
+func (infoSlice paramExpectSlice) Names() []string {
+	names := make([]string, len(infoSlice))
+	for idx, info := range infoSlice {
+		names[idx] = info.name
+	}
+	return names
+}
+
+// Satisfy NamedSlice interface for argExpectSlice.
+func (infoSlice argExpectSlice) Names() []string {
+	names := make([]string, len(infoSlice))
+	for idx, info := range infoSlice {
+		names[idx] = info.name
+	}
+	return names
+}
+
 var (
-	expectedGlobalParams []ParamExpectInfo
-	expectedLocalParams  []ParamExpectInfo
-	expectedArgs         []expectedArgInfo
+	expectedGlobalParams paramExpectSlice
+	expectedLocalParams  paramExpectSlice
+	expectedArgs         argExpectSlice
 )
 
 // Returns the parameter type. Also returns a flag indicating if
 // the request was valid.
-func expectedInfo(passedName string, global bool) (ParamExpectInfo, bool) {
-	var expectedParams []ParamExpectInfo
+func expectedInfo(passedName string, global bool) (paramExpectInfo, bool) {
+	var expectedParams paramExpectSlice
 	if global {
 		expectedParams = expectedGlobalParams
 	} else {
@@ -43,13 +66,13 @@ func expectedInfo(passedName string, global bool) (ParamExpectInfo, bool) {
 		}
 	}
 
-	return ParamExpectInfo{}, false
+	return paramExpectInfo{}, false
 }
 
-func expectFlag(alias, name, desc string, where *[]ParamExpectInfo) {
+func expectFlag(alias, name, desc string, where *paramExpectSlice) {
 	*where = append(
 		*where,
-		ParamExpectInfo{
+		paramExpectInfo{
 			alias:      alias,
 			name:       name,
 			kind:       ParamFlag,
@@ -70,10 +93,10 @@ func ExpectFlag(alias, name, desc string) {
 	expectFlag(alias, name, desc, &expectedLocalParams)
 }
 
-func expectStrOption(alias, name, desc, defaultValue string, where *[]ParamExpectInfo) {
+func expectStrOption(alias, name, desc, defaultValue string, where *paramExpectSlice) {
 	*where = append(
 		*where,
-		ParamExpectInfo{
+		paramExpectInfo{
 			alias:      alias,
 			name:       name,
 			kind:       ParamStr,
@@ -94,10 +117,10 @@ func ExpectStrOption(alias, name, desc, defaultValue string) {
 	expectStrOption(alias, name, desc, defaultValue, &expectedLocalParams)
 }
 
-func expectIntOption(alias, name, desc string, defaultValue int, where *[]ParamExpectInfo) {
+func expectIntOption(alias, name, desc string, defaultValue int, where *paramExpectSlice) {
 	*where = append(
 		*where,
-		ParamExpectInfo{
+		paramExpectInfo{
 			alias:      alias,
 			name:       name,
 			kind:       ParamInt,
@@ -123,7 +146,7 @@ func ExpectIntOption(alias, name, desc string, defaultValue int) {
 func ExpectArg(name, desc string) {
 	expectedArgs = append(
 		expectedArgs,
-		expectedArgInfo{
+		argExpectInfo{
 			name: name,
 			desc: desc,
 		},

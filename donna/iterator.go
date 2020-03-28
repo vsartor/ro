@@ -5,7 +5,10 @@
 
 package donna
 
-import "os"
+import (
+	"os"
+	"strings"
+)
 
 type paramIterator struct {
 	currIdx int
@@ -27,6 +30,20 @@ func (pi *paramIterator) Rewind() {
 // a valid request.
 func (pi *paramIterator) Curr() string {
 	return os.Args[pi.currIdx]
+}
+
+// Returns the chain of Args as a string up to the current command.
+func (pi *paramIterator) Path() string {
+	fullPath := os.Args[:pi.currIdx+1]
+
+	var argsPath strings.Builder
+	for _, arg := range fullPath {
+		if !strings.HasPrefix(arg, "-") {
+			argsPath.WriteString(arg)
+			argsPath.Write([]byte{' '})
+		}
+	}
+	return argsPath.String()
 }
 
 // Returns the next parameter, and a flag indicating if there was
