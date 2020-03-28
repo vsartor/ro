@@ -157,13 +157,13 @@ func getClusterCreationRequest(
 
 func clusterCmd() {
 	// Handle command line arguments
-	donna.ExpectStrOption("p", "project", "")
-	donna.ExpectStrOption("b", "bucket", "")
-	donna.ExpectStrOption("r", "cred", "")
-	donna.ExpectStrOption("n", "name", "")
-	donna.ExpectIntOption("c", "cores", 0)
-	donna.ExpectIntOption("w", "numWorkers", 0)
-	donna.ExpectFlag("m", "highmem")
+	donna.ExpectStrOption("p", "project", "Project name.", "")
+	donna.ExpectStrOption("b", "bucket", "Bucket name, for cluster setup.", "")
+	donna.ExpectStrOption("r", "cred", "Path to credential file.", "")
+	donna.ExpectStrOption("n", "name", "Name of the cluster.", "")
+	donna.ExpectIntOption("c", "cores", "Number of cores.", 0)
+	donna.ExpectIntOption("w", "numWorkers", "Number of workers.", 0)
+	donna.ExpectFlag("m", "highmem", "Indicates whether high memory instances should be used.")
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())

@@ -12,6 +12,7 @@ type ParamExpectInfo struct {
 	kind       ParamKind // Type of the parameter.
 	defaultStr string    // Default value for parameter, if it's a string.
 	defaultInt int       // Default value for parameter, if it's an integer.
+	desc       string    // Parameter description.
 }
 
 var (
@@ -38,7 +39,7 @@ func expectedInfo(passedName string, global bool) (ParamExpectInfo, bool) {
 	return ParamExpectInfo{}, false
 }
 
-func expectFlag(alias, name string, where *[]ParamExpectInfo) {
+func expectFlag(alias, name, desc string, where *[]ParamExpectInfo) {
 	*where = append(
 		*where,
 		ParamExpectInfo{
@@ -47,21 +48,22 @@ func expectFlag(alias, name string, where *[]ParamExpectInfo) {
 			kind:       ParamFlag,
 			defaultStr: "",
 			defaultInt: 0,
+			desc:       desc,
 		},
 	)
 }
 
 // Registers a global flag.
-func ExpectGlobalFlag(alias, name string) {
-	expectFlag(alias, name, &expectedGlobalParams)
+func ExpectGlobalFlag(alias, name, desc string) {
+	expectFlag(alias, name, desc, &expectedGlobalParams)
 }
 
 // Registers a command flag.
-func ExpectFlag(alias, name string) {
-	expectFlag(alias, name, &expectedLocalParams)
+func ExpectFlag(alias, name, desc string) {
+	expectFlag(alias, name, desc, &expectedLocalParams)
 }
 
-func expectStrOption(alias, name, defaultValue string, where *[]ParamExpectInfo) {
+func expectStrOption(alias, name, desc, defaultValue string, where *[]ParamExpectInfo) {
 	*where = append(
 		*where,
 		ParamExpectInfo{
@@ -70,21 +72,22 @@ func expectStrOption(alias, name, defaultValue string, where *[]ParamExpectInfo)
 			kind:       ParamStr,
 			defaultStr: defaultValue,
 			defaultInt: 0,
+			desc:       desc,
 		},
 	)
 }
 
 // Register a global string option.
-func ExpectGlobalStrOption(alias, name, defaultValue string) {
-	expectStrOption(alias, name, defaultValue, &expectedGlobalParams)
+func ExpectGlobalStrOption(alias, name, desc, defaultValue string) {
+	expectStrOption(alias, name, desc, defaultValue, &expectedGlobalParams)
 }
 
 // Registers a command string option.
-func ExpectStrOption(alias, name, defaultValue string) {
-	expectStrOption(alias, name, defaultValue, &expectedLocalParams)
+func ExpectStrOption(alias, name, desc, defaultValue string) {
+	expectStrOption(alias, name, desc, defaultValue, &expectedLocalParams)
 }
 
-func expectIntOption(alias, name string, defaultValue int, where *[]ParamExpectInfo) {
+func expectIntOption(alias, name, desc string, defaultValue int, where *[]ParamExpectInfo) {
 	*where = append(
 		*where,
 		ParamExpectInfo{
@@ -93,16 +96,17 @@ func expectIntOption(alias, name string, defaultValue int, where *[]ParamExpectI
 			kind:       ParamInt,
 			defaultStr: "",
 			defaultInt: defaultValue,
+			desc:       desc,
 		},
 	)
 }
 
 // Register a global string option.
-func ExpectGlobalIntOption(alias, name string, defaultValue int) {
-	expectIntOption(alias, name, defaultValue, &expectedGlobalParams)
+func ExpectGlobalIntOption(alias, name, desc string, defaultValue int) {
+	expectIntOption(alias, name, desc, defaultValue, &expectedGlobalParams)
 }
 
 // Registers a command string option.
-func ExpectIntOption(alias, name string, defaultValue int) {
-	expectIntOption(alias, name, defaultValue, &expectedLocalParams)
+func ExpectIntOption(alias, name, desc string, defaultValue int) {
+	expectIntOption(alias, name, desc, defaultValue, &expectedLocalParams)
 }

@@ -26,7 +26,7 @@ type ParamInfo struct {
 	valueStr  string    // Parameter value, passed or default.
 	valueInt  int
 	valueBool bool
-	wasPassed bool      // Indicates whether parameter was passed.
+	wasPassed bool // Indicates whether parameter was passed.
 }
 
 func NewParamInfo(expectedParam ParamExpectInfo) *ParamInfo {
