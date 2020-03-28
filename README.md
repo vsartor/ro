@@ -123,7 +123,7 @@ Besides, Donna also provides an automatic `--help` display, and stating expected
 `func ExpectArg(name, desc string)` can help building a more informative output. An example of the help
 command output is shown below for the `upload` command of the `gcp` tool.
 
-![](https://vsartor.com/images/gcp_help_example.png)
+![GCP upload, --help example](https://raw.githubusercontent.com/vsartor/ro/donna-help/.github/gcp_upload_help_example.png)
 
 Presence of flags can be checked with Donna's `func HasFlag(string) bool` and options values can be checked
 with Donna's `func GetStrOption(name string) (string, bool)` and `func GetIntOption(name string) (string, bool)`
