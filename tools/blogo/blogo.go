@@ -27,6 +27,8 @@ func Cmd() {
 
 	// Register this commands flags/options and validate them
 	donna.ExpectFlag("l", "local", "Indicates whether should compile for local testing.")
+	donna.ExpectArg("srcDir", "Directory with source code for blog.")
+	donna.ExpectArg("dstDir", "Destination directory where blog should be built.")
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())

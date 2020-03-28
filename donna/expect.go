@@ -15,9 +15,16 @@ type ParamExpectInfo struct {
 	desc       string    // Parameter description.
 }
 
+// Expected information about an argument.
+type expectedArgInfo struct {
+	name string // Alias for referring to this argument.
+	desc string // Argument description.
+}
+
 var (
 	expectedGlobalParams []ParamExpectInfo
 	expectedLocalParams  []ParamExpectInfo
+	expectedArgs         []expectedArgInfo
 )
 
 // Returns the parameter type. Also returns a flag indicating if
@@ -109,4 +116,16 @@ func ExpectGlobalIntOption(alias, name, desc string, defaultValue int) {
 // Registers a command string option.
 func ExpectIntOption(alias, name, desc string, defaultValue int) {
 	expectIntOption(alias, name, desc, defaultValue, &expectedLocalParams)
+}
+
+// Registers an expected argument.
+// Only useful for building the help command.
+func ExpectArg(name, desc string) {
+	expectedArgs = append(
+		expectedArgs,
+		expectedArgInfo{
+			name: name,
+			desc: desc,
+		},
+	)
 }

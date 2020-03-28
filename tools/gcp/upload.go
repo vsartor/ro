@@ -19,6 +19,8 @@ func uploadCmd() {
 	// Handle command line parameters
 	donna.ExpectStrOption("b", "bucket", "Bucket that should receive files.", "")
 	donna.ExpectStrOption("r", "cred", "Path to credentials file.", "")
+	donna.ExpectArg("sourcePath", "Path to the object that needs to be uploaded.")
+	donna.ExpectArg("destinationPath", "Path within the bucket that will receive the object.")
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
