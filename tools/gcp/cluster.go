@@ -51,6 +51,7 @@ func getClusterCreationRequest(
 	numWorkers int,
 	numCores int,
 	highMemory bool,
+	persistent bool,
 ) *dataprocpb.CreateClusterRequest {
 	// Compute the tier of the machines we'll work with
 	machineUriName := "n1-standard"
@@ -126,8 +127,12 @@ func getClusterCreationRequest(
 		},
 	}
 
-	lifecycleConfig := &dataprocpb.LifecycleConfig{
-		IdleDeleteTtl: &duration.Duration{Seconds: 3600},
+	var lifecycleConfig *dataprocpb.LifecycleConfig
+
+	if !persistent {
+		lifecycleConfig = &dataprocpb.LifecycleConfig{
+			IdleDeleteTtl: &duration.Duration{Seconds: 28800},
+		}
 	}
 
 	clusterConfig := &dataprocpb.ClusterConfig{
@@ -163,6 +168,7 @@ func initClusterCmd() {
 	donna.ExpectIntOption("c", "cores", "Number of cores.", 0)
 	donna.ExpectIntOption("w", "workers", "Number of workers.", 0)
 	donna.ExpectFlag("m", "highmem", "Indicates whether high memory instances should be used.")
+	donna.ExpectFlag("p", "persist", "Indicates whether cluster should persist.")
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -193,8 +199,9 @@ func getGcpVars() (string, string, string) {
 	return projectName, credentialPath, bucketName
 }
 
-// Parses cluster name, number of workers, number of cores and high memory flag.
-func getClusterVars() (string, int, int, bool) {
+// Parses cluster name, number of workers, number of cores and, high memory
+// and persistence flag.
+func getClusterVars() (string, int, int, bool, bool) {
 	clusterName, passed := donna.GetStrOption("name")
 	if !passed {
 		clusterName = "ro-cluster"
@@ -213,8 +220,9 @@ func getClusterVars() (string, int, int, bool) {
 	}
 
 	highMemory := donna.HasFlag("highmem")
+	persist := donna.HasFlag("persist")
 
-	return clusterName, workerCount, coreCount, highMemory
+	return clusterName, workerCount, coreCount, highMemory, persist
 }
 
 func clusterCmd() {
@@ -223,7 +231,7 @@ func clusterCmd() {
 
 	// Load and validate cli parameters.
 	projectId, credentialPath, bucketName := getGcpVars()
-	clusterName, workerCount, coreCount, highMemory := getClusterVars()
+	clusterName, workerCount, coreCount, highMemory, persist := getClusterVars()
 
 	// Create a cluster controller client.
 	ctx := context.Background()
@@ -245,6 +253,7 @@ func clusterCmd() {
 		workerCount,
 		coreCount,
 		highMemory,
+		persist,
 	)
 
 	// Perform actual request to create the cluster.
