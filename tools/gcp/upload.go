@@ -12,7 +12,6 @@ import (
 	"github.com/vsartor/ro/donna"
 	"github.com/vsartor/ro/linus"
 	"google.golang.org/api/option"
-	"os"
 )
 
 func uploadCmd() {
@@ -24,25 +23,25 @@ func uploadCmd() {
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 
 	bucket, passed := donna.GetStrOption("bucket")
 	if !passed {
 		fmt.Println("Did not receive bucket.")
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 	credential := getCredential(bucket)
 
 	srcPath, ok := donna.NextArg()
 	if !ok {
 		fmt.Println("Expected source path as argument.")
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 	dstPath, ok := donna.NextArg()
 	if !ok {
 		fmt.Println("Expected destination path as argument.")
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 
 	// Create client

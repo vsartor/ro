@@ -6,10 +6,8 @@
 package gcp
 
 import (
-	"fmt"
 	"github.com/vsartor/ro/donna"
 	"github.com/vsartor/ro/weems"
-	"os"
 )
 
 var logger weems.Logger
@@ -20,10 +18,14 @@ func initGcp() {
 
 func Cmd() {
 	initGcp()
+
+	donna.ForgetDispatch()
+	donna.ExpectDispatch("cluster", "Create a Dataproc cluster.")
+	donna.ExpectDispatch("upload", "Upload a file or directory to a bucket.")
+
 	command, ok := donna.NextArg()
 	if !ok {
-		fmt.Printf("Expected a GCP command.\n")
-		os.Exit(1)
+		donna.DisplayDispatchHelp()
 	}
 
 	switch command {
@@ -32,7 +34,6 @@ func Cmd() {
 	case "upload":
 		uploadCmd()
 	default:
-		fmt.Printf("Unexpected GCP command %q.\n", command)
-		os.Exit(1)
+		donna.DisplayDispatchHelp()
 	}
 }

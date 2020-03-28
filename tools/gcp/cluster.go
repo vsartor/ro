@@ -14,7 +14,6 @@ import (
 	"google.golang.org/api/option"
 	dataprocpb "google.golang.org/genproto/googleapis/cloud/dataproc/v1beta2"
 	"math"
-	"os"
 )
 
 const (
@@ -157,7 +156,7 @@ func getClusterCreationRequest(
 
 func clusterCmd() {
 	// Handle command line arguments
-	donna.ExpectStrOption("p", "project", "Project name.", "")
+	donna.ExpectStrOption("p", "project", "Project ID.", "")
 	donna.ExpectStrOption("b", "bucket", "Bucket name, for cluster setup.", "")
 	donna.ExpectStrOption("r", "cred", "Path to credential file.", "")
 	donna.ExpectStrOption("n", "name", "Name of the cluster.", "")
@@ -167,20 +166,20 @@ func clusterCmd() {
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 
 	// TODO: Infer this from credentials
 	projectName, passed := donna.GetStrOption("project")
 	if !passed {
-		fmt.Println("Did not receive project name.")
-		os.Exit(1)
+		fmt.Println("Did not receive project ID.")
+		donna.DisplayCommandHelp()
 	}
 
 	bucketName, passed := donna.GetStrOption("bucket")
 	if !passed {
 		fmt.Println("Did not receive bucket name.")
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 
 	credential := getCredential(bucketName)
@@ -189,13 +188,13 @@ func clusterCmd() {
 	numCores, passed := donna.GetIntOption("cores")
 	if !passed {
 		fmt.Println("Did not receive number of cores.")
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 
 	numWorkers, passed := donna.GetIntOption("numWorkers")
 	if !passed {
 		fmt.Println("Did not receive number of numWorkers.")
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 	highMemory := donna.HasFlag("highmem")
 

@@ -32,7 +32,7 @@ func Cmd() {
 	err := donna.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 
 	// Attempt to fetch srcDir and dstDir through Donna arguments,
@@ -48,7 +48,7 @@ func Cmd() {
 	}
 	if srcDir == "" {
 		fmt.Printf("Pass srcDir as argument or through $%s.", srcDirEnvKey)
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 
 	dstDir, ok := donna.NextArg()
@@ -60,7 +60,7 @@ func Cmd() {
 	}
 	if dstDir == "" {
 		fmt.Printf("Pass dstDir as argument or through $%s.", dstDirEnvKey)
-		os.Exit(1)
+		donna.DisplayCommandHelp()
 	}
 
 	// Load settings

@@ -48,6 +48,7 @@ var (
 	expectedGlobalParams paramExpectSlice
 	expectedLocalParams  paramExpectSlice
 	expectedArgs         argExpectSlice
+	expectedDispatches   argExpectSlice
 )
 
 // Returns the parameter type. Also returns a flag indicating if
@@ -146,6 +147,22 @@ func ExpectIntOption(alias, name, desc string, defaultValue int) {
 func ExpectArg(name, desc string) {
 	expectedArgs = append(
 		expectedArgs,
+		argExpectInfo{
+			name: name,
+			desc: desc,
+		},
+	)
+}
+
+// Unregisters all dispatches.
+func ForgetDispatch() {
+	expectedDispatches = make(argExpectSlice, 0, 2)
+}
+
+// Registers an expected dispatch name.
+func ExpectDispatch(name, desc string) {
+	expectedDispatches = append(
+		expectedDispatches,
 		argExpectInfo{
 			name: name,
 			desc: desc,

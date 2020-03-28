@@ -16,7 +16,7 @@ import (
 
 var (
 	logger  weems.Logger
-	Version string        // The `make install` command sets this variable
+	Version string // The `make install` command sets this variable
 )
 
 func init() {
@@ -47,10 +47,15 @@ func main() {
 		weems.SetGlobalLevel(weems.TRACE)
 	}
 
+	// Register dispatch options
+	donna.ForgetDispatch()
+	donna.ExpectDispatch("version", "Displays Ro's current version.")
+	donna.ExpectDispatch("gcp", "Tools for operations on Google Cloud Platform.")
+	donna.ExpectDispatch("blogo", "Tool for building blog HTMLs from source.")
+
 	method, ok := donna.NextArg()
 	if !ok {
-		fmt.Printf("No commands given.\n")
-		os.Exit(1)
+		donna.DisplayDispatchHelp()
 	}
 
 	switch method {
@@ -63,8 +68,7 @@ func main() {
 		logger.Trace("Dispatching to gcp.")
 		gcp.Cmd()
 	default:
-		fmt.Printf("Unexpected command %q.\n", method)
-		os.Exit(1)
+		donna.DisplayDispatchHelp()
 	}
 }
 

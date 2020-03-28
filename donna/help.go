@@ -39,7 +39,7 @@ func getKindStr(kind ParamKind) string {
 	panic("Unexpected parameter kind received.")
 }
 
-// Displays command help based on parameter and argument expected information.
+// Displays command help based on expected parameter and argument information.
 func DisplayCommandHelp() {
 	// Show command usage
 	var usageString strings.Builder
@@ -80,6 +80,25 @@ func DisplayCommandHelp() {
 			paddedName := fmt.Sprintf(padFmt, paramInfo.name)
 			fmt.Printf("\033[94m→\033[0m %s \033[94m[%s]\033[0m: %s\n", paddedName, kind, paramInfo.desc)
 		}
+	}
+
+	os.Exit(0)
+}
+
+// Displays dispatch help based on expected parameter and argument information.
+func DisplayDispatchHelp() {
+	// Show command usage
+	fmt.Printf("Usage:\n\t%s <\033[94mcommand\033[0m>\n", iterator.Path())
+
+	// Compute padding
+	padding := computePadding(expectedDispatches)
+	padFmt := fmt.Sprintf("\033[94m%%-%ds\033[0m", padding)
+
+	// Display commands
+	fmt.Printf("\nCommands:\n")
+	for _, cmdInfo := range expectedDispatches {
+		paddedName := fmt.Sprintf(padFmt, cmdInfo.name)
+		fmt.Printf("→ %s %s\n", paddedName, cmdInfo.desc)
 	}
 
 	os.Exit(0)
