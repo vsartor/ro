@@ -47,8 +47,7 @@ func DisplayCommandHelp() {
 	usageString.WriteString("Usage: ")
 	usageString.WriteString(iterator.Path())
 	for _, argInfo := range expectedArgs {
-		usageString.WriteString(argInfo.name)
-		usageString.Write([]byte{' '})
+		usageString.WriteString(fmt.Sprintf("<%s> ", argInfo.name))
 	}
 	usageString.WriteString("[parameters]")
 
