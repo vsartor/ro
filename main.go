@@ -16,7 +16,7 @@ import (
 
 var (
 	logger  weems.Logger
-	Version string
+	Version string        // The `make install` command sets this variable
 )
 
 func init() {
