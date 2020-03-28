@@ -14,6 +14,7 @@ import (
 	"google.golang.org/api/option"
 	dataprocpb "google.golang.org/genproto/googleapis/cloud/dataproc/v1beta2"
 	"math"
+	"os"
 )
 
 const (
@@ -154,9 +155,8 @@ func getClusterCreationRequest(
 	return request
 }
 
-func clusterCmd() {
-	// Handle command line arguments
-	donna.ExpectStrOption("p", "project", "Project ID.", "")
+// Register and request parsing of cli parameters with Donna.
+func initClusterCmd() {
 	donna.ExpectStrOption("b", "bucket", "Bucket name, for cluster setup.", "")
 	donna.ExpectStrOption("r", "cred", "Path to credential file.", "")
 	donna.ExpectStrOption("n", "name", "Name of the cluster.", "")
@@ -168,13 +168,13 @@ func clusterCmd() {
 		fmt.Println(err.Error())
 		donna.DisplayCommandHelp()
 	}
+}
 
-	// TODO: Infer this from credentials
-	projectName, passed := donna.GetStrOption("project")
-	if !passed {
-		fmt.Println("Did not receive project ID.")
-		donna.DisplayCommandHelp()
-	}
+// Parses and returns project ID, credential and staging bucket.
+func getGcpVars() (string, string, string) {
+	// Project ID is inferred from the credential path. The credential path is
+	// possibly inferred by the bucket.  Thus the parsing order must  be bucket,
+	// credential path and project ID, respectively.
 
 	bucketName, passed := donna.GetStrOption("bucket")
 	if !passed {
@@ -182,46 +182,76 @@ func clusterCmd() {
 		donna.DisplayCommandHelp()
 	}
 
-	credential := getCredential(bucketName)
+	credentialPath := getCredentials(bucketName)
 
-	// TODO: Specify integer option
-	numCores, passed := donna.GetIntOption("cores")
-	if !passed {
-		fmt.Println("Did not receive number of cores.")
-		donna.DisplayCommandHelp()
+	projectName, err := getProjectId(credentialPath)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
 	}
 
-	numWorkers, passed := donna.GetIntOption("numWorkers")
-	if !passed {
-		fmt.Println("Did not receive number of numWorkers.")
-		donna.DisplayCommandHelp()
-	}
-	highMemory := donna.HasFlag("highmem")
+	return projectName, credentialPath, bucketName
+}
 
+// Parses cluster name, number of workers, number of cores and high memory flag.
+func getClusterVars() (string, int, int, bool) {
 	clusterName, passed := donna.GetStrOption("name")
 	if !passed {
 		clusterName = "ro-cluster"
 	}
 
-	// Create the cluster
+	workerCount, passed := donna.GetIntOption("workers")
+	if !passed {
+		fmt.Println("Did not receive number of workers.")
+		donna.DisplayCommandHelp()
+	}
 
+	coreCount, passed := donna.GetIntOption("cores")
+	if !passed {
+		fmt.Println("Did not receive number of cores.")
+		donna.DisplayCommandHelp()
+	}
+
+	highMemory := donna.HasFlag("highmem")
+
+	return clusterName, workerCount, coreCount, highMemory
+}
+
+func clusterCmd() {
+	// Register and request parsing of cli parameters.
+	initClusterCmd()
+
+	// Load and validate cli parameters.
+	projectId, credentialPath, bucketName := getGcpVars()
+	clusterName, workerCount, coreCount, highMemory := getClusterVars()
+
+	// Create a cluster controller client.
 	ctx := context.Background()
 	client, err := dataproc.NewClusterControllerClient(
 		ctx,
-		option.WithCredentialsFile(credential),
+		option.WithCredentialsFile(credentialPath),
 		option.WithEndpoint(gcpEndpoint),
 	)
 	if err != nil {
-		logger.Fatal("Failed to create clusterControllerClient: %s", err)
+		logger.Fatal("Failed to create a cluster controller client: %s", err)
 	}
 	defer client.Close()
 
-	request := getClusterCreationRequest(clusterName, projectName, bucketName, numWorkers, numCores, highMemory)
+	// Compute appropriate values and generate a request for cluster creation.
+	request := getClusterCreationRequest(
+		clusterName,
+		projectId,
+		bucketName,
+		workerCount,
+		coreCount,
+		highMemory,
+	)
 
+	// Perform actual request to create the cluster.
 	_, err = client.CreateCluster(ctx, request)
 	if err != nil {
 		logger.Fatal("Could not create cluster: %s", err)
 	}
 
-	logger.Info("Cluster creation request successfully sent.")
+	fmt.Println("Cluster creation request successful.")
 }

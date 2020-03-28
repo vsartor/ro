@@ -31,7 +31,7 @@ func uploadCmd() {
 		fmt.Println("Did not receive bucket.")
 		donna.DisplayCommandHelp()
 	}
-	credential := getCredential(bucket)
+	credential := getCredentials(bucket)
 
 	srcPath, ok := donna.NextArg()
 	if !ok {
