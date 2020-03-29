@@ -13,13 +13,13 @@ import (
 	"github.com/vsartor/ro/donna"
 	"google.golang.org/api/option"
 	dataprocpb "google.golang.org/genproto/googleapis/cloud/dataproc/v1beta2"
-	"math"
 	"os"
 )
 
 const (
-	workerOsMemory = 4096
-	overheadRatio  = 0.1
+	minimumOverhead = 384
+	overheadRatio   = 0.1
+	workerOsMemory  = 4096
 )
 
 const (
@@ -28,6 +28,15 @@ const (
 	gcpEndpoint = "us-central1-dataproc.googleapis.com:443"
 )
 
+// Computes how much memory should be left over for the OS given.
+func osMemory(totalMemory int) int {
+	if totalMemory-workerOsMemory < workerOsMemory {
+		// We don't have that much memory. Leave less for the OS.
+		return workerOsMemory / 2
+	}
+	return workerOsMemory
+}
+
 // Computes an appropriate value for yarn.nodemanager.resource.memory-mb
 // setting based on on total node machine capacity.
 func yarnMemory(numCores, memoryPerCore int) int {
@@ -35,12 +44,26 @@ func yarnMemory(numCores, memoryPerCore int) int {
 	return totalMemory - workerOsMemory
 }
 
+// Computes the memory overhead.
+func memoryOverhead(cores, memoryPerCore int) int {
+	// If there is enough memory, the memory overhead will be the overhead
+	// ratio times the total memory. However, overhead will be at least 384
+	// megabytes. This can happen when allocating n1-standard-2 machines.
+	// Deal with it here.
+
+	exactOverhead := overheadRatio * float64(yarnMemory(cores, memoryPerCore))
+	overhead := int(exactOverhead)
+	if overhead < minimumOverhead {
+		return minimumOverhead
+	}
+	return overhead
+}
+
 // Computes an appropriate value for spark.executor.memory setting based
 // on number of cores per executor and amount of memory per core in the
 // machine.
 func computeExecutorMemory(cores, memoryPerCore int) int {
-	exactMemoryValue := (1.0 - overheadRatio) * float64(yarnMemory(cores, memoryPerCore))
-	return int(math.Floor(exactMemoryValue))
+	return yarnMemory(cores, memoryPerCore) - memoryOverhead(cores, memoryPerCore)
 }
 
 // Builds a CreateClusterRequest to be send by the client
@@ -77,6 +100,9 @@ func getClusterCreationRequest(
 	}
 	memoryPerWorker := yarnMemory(numCores, memoryPerCore)
 	executorMemory := computeExecutorMemory(numCores, memoryPerCore)
+
+	logger.Trace("Memory per worker (yarn-memory) is set to %d.", memoryPerWorker)
+	logger.Trace("Memory per executor is set to %d.", executorMemory)
 
 	// Below here we just build the request
 
