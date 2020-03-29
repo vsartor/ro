@@ -17,9 +17,10 @@ import (
 )
 
 const (
-	minimumOverhead = 384
-	overheadRatio   = 0.1
-	workerOsMemory  = 4096
+	minimumOverhead     = 384
+	overheadRatio       = 0.1
+	workerOsMemory      = 4096
+	smallWorkerOsMemory = 3072
 )
 
 const (
@@ -32,7 +33,7 @@ const (
 func osMemory(totalMemory int) int {
 	if totalMemory-workerOsMemory < workerOsMemory {
 		// We don't have that much memory. Leave less for the OS.
-		return workerOsMemory / 2
+		return smallWorkerOsMemory
 	}
 	return workerOsMemory
 }
@@ -41,7 +42,7 @@ func osMemory(totalMemory int) int {
 // setting based on on total node machine capacity.
 func yarnMemory(numCores, memoryPerCore int) int {
 	totalMemory := numCores * memoryPerCore
-	return totalMemory - workerOsMemory
+	return totalMemory - osMemory(totalMemory)
 }
 
 // Computes the memory overhead.
